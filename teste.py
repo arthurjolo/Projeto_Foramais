@@ -8,7 +8,10 @@ def teste(lista):
     print(lista)
 
 
+#teste(['a', '.', 'abcdefg'])
 
 
+def teste2():
+    print([1, 2, 3]+None)
 
-teste(['a', '.', 'abcdefg'])
+teste2()

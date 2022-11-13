@@ -17,20 +17,114 @@ er: a?(a | b)+
 operadores = ['*', '+', '?', '|', '(', ')', '.']
 empty = '&'
 
-class tipoSimbolo:
-    ALFABETO = 1
-    NUMERO = 2
-    OPERADOR = 3  
-    FECHO = 4  
-    FINAL = 5
-
 class arvoreExpressao:
-    def __init__(self, tipo_simbolo, valor=None, esquerda=None, direita=None):
-        self.tipo_simbolo = tipo_simbolo
+    def __init__(self, valor, esquerda=None, direita=None):
         self.valor = valor
         self.esquerda = esquerda
         self.direita = direita
+        self.nullable = None #True or False
+        self.first_pos = None
+        self.last_pos = None
+        self.follow_pos = None
 
+def calcular_follow_pos(arvore):
+    pass
+
+def calcular_last_pos(arvore, todos, contador=0):
+    try:
+        valor = arvore.valor
+    except:
+        valor = arvore
+
+    if valor == '.':
+        if arvore.direita.nullable:
+            arvore.last_pos = calcular_last_pos(arvore.direita, todos, contador)+calcular_last_pos(arvore.esquerda, todos, contador)
+        else:
+            arvore.last_pos = calcular_last_pos(arvore.direita, todos, contador)
+    elif valor == '|':
+        arvore.last_pos = calcular_last_pos(arvore.esquerda, todos)+calcular_last_pos(arvore.direita, todos, contador)
+    elif valor == '*':
+        arvore.last_pos = calcular_last_pos(arvore.esquerda, todos, contador)
+    elif valor == '+':
+        #rever essa regra com a professora
+        arvore.last_pos = calcular_last_pos(arvore.esquerda, todos, contador)
+    elif valor == '&':
+        arvore.last_pos = []
+    else:
+        if valor in todos.keys():
+            arvore.last_pos = todos[valor].first_pos
+        else:
+            contador += 1
+            return [contador]
+    
+def definir_last_pos(arvore, todos):
+    calcular_last_pos(arvore, todos, contador=0)
+
+def calcular_first_pos(arvore, todos, contador=0):
+    try:
+        valor = arvore.valor
+    except:
+        valor = arvore
+
+    if valor == '.':
+        if arvore.esquerda.nullable:
+            arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)+calcular_first_pos(arvore.direita, todos, contador)
+        else:
+            arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
+    elif valor == '|':
+        arvore.first_pos = calcular_first_pos(arvore.esquerda, todos)+calcular_first_pos(arvore.direita, todos, contador)
+    elif valor == '*':
+        arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
+    elif valor == '+':
+        #rever essa regra com a professora
+        arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
+    elif valor == '&':
+        arvore.first_pos = []
+    else:
+        if valor in todos.keys():
+            arvore.first_pos = todos[valor].first_pos
+        else:
+            contador += 1
+            return [contador]
+    
+def definir_first_pos(arvore, todos):
+    calcular_first_pos(arvore, todos, contador=0)
+
+def calcular_nullables(arvore, todos):
+    try:
+        valor = arvore.valor
+    except:
+        valor = arvore
+
+    if valor == '.':
+        nullable_direita = calcular_nullables(arvore.direita, todos)
+        nullable_esquerda = calcular_nullables(arvore.esquerda, todos)
+        arvore.nullable = (nullable_esquerda and nullable_direita)
+    elif valor == '|':
+        arvore.nullable = (calcular_nullables(arvore.esquerda, todos) or calcular_nullables(arvore.direita, todos))
+    elif valor == '*':
+        arvore.nullable = True
+    elif valor == '+':
+        arvore.nullable = False
+    elif valor == '&':
+        arvore.nullable = True
+    else:
+        if valor in todos.keys():
+            arvore.nullable = (todos[valor].nullable)
+        else:
+            return False
+
+def definir_nullable(arvore, todos):
+    calcular_nullables(arvore, todos)
+
+
+def calcular_valores_pos(dict):
+    for chave in dict.keys():
+        arvore = dict[chave]
+        definir_nullable(arvore, dict)
+        definir_first_pos(arvore, dict)
+        definir_last_pos(arvore, dict)
+    return dict
 
 
 #Percorrer expressão e retornar o nodo do topo da árvore
@@ -63,16 +157,14 @@ def criar_arvore(expressao, todos):
     while expressao != []:
         simbolo = expressao.pop()
         if simbolo == '#':
-            valor_direita = arvoreExpressao(tipo_simbolo=tipoSimbolo.FINAL)
+            valor_direita = arvoreExpressao(valor=simbolo)
         elif isinstance(simbolo, list):
             valor_direita =  criar_arvore(simbolo, todos)
         elif simbolo in ['*', '+']:
-            valor_direita = arvoreExpressao(tipo_simbolo=tipoSimbolo.FECHO, 
-                                            valor=simbolo,
+            valor_direita = arvoreExpressao(valor=simbolo,
                                             esquerda=criar_arvore(expressao, todos))
         elif simbolo == '|' or simbolo == '.':
-            valor_direita = arvoreExpressao(tipo_simbolo=tipoSimbolo.OPERADOR, 
-                                            valor=simbolo,
+            valor_direita = arvoreExpressao(valor=simbolo,
                                             direita=copy.copy(valor_direita),
                                             esquerda=criar_arvore(expressao, todos))
         else:
@@ -142,10 +234,15 @@ def processar_dependencias(expressao):
                 parte.insert(0, pilha.pop())
             pilha.pop()
             pilha.append(parte)
+
+    if grupo != "":
+        pilha.append(grupo)
     
     if pilha != []:
         pilha.append('.')
     pilha.append('#')
+
+    return pilha
 
 #Adicionando operador . de concatenação na expressão regular
 #operadores = ['*', '+', '?', '|', '(', ')', '.']
@@ -199,5 +296,9 @@ def ler_arquivo(nome_arquivo):
 
 
 if __name__ == "__main__":
-    criar_arvore([['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#'], {})
-    
+    #criar_arvore([['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#'], {})
+    dict = {}
+    dict['exp'] = '(a|b)*abb'
+    dict = processar_expressoes(dict)
+    dict = calcular_valores_pos(dict)
+    print('bla')
