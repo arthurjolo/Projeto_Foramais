@@ -31,6 +31,8 @@ class arvoreExpressao:
         self.esquerda = esquerda
         self.direita = direita
 
+
+
 #Percorrer expressão e retornar o nodo do topo da árvore
 #entrada: [['a','|', '&'], '.', [['a', '|', 'b'], '+'], '.', '#']
 #certo
@@ -177,6 +179,7 @@ def adicionar_concat(expressao):
     resultado.append(expressao[-1])
     return resultado
 
+#retorna dict com todas as entradas de Regex, com as suas árvores como valores
 def processar_expressoes(dict):
     for chave in dict.keys():
         expressao_regular = dict[chave]
@@ -185,6 +188,7 @@ def processar_expressoes(dict):
         dict[chave] = criar_arvore(expressao_regular, dict)
     return dict
         
+#lê arquivo de entrada e retorna uma dict com todas as entradas de Regex e seus valores como string
 def ler_arquivo(nome_arquivo):
     dict = {}
     with open(nome_arquivo) as f:
@@ -194,7 +198,6 @@ def ler_arquivo(nome_arquivo):
     return dict
 
 
-    
 if __name__ == "__main__":
     criar_arvore([['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#'], {})
     
