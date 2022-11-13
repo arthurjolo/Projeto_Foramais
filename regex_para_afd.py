@@ -33,21 +33,16 @@ class arvoreExpressao:
 
 #Percorrer expressão e retornar o nodo do topo da árvore
 #entrada: [['a','|', '&'], '.', [['a', '|', 'b'], '+'], '.', '#']
-#saída:
+#certo
 
 #entrada: [['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#']
-#         [['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b']]
+#
 
-#entrada: [[['a', '|', 'b'], '*'], '.', ['ab', '|', '&'], '.', [['ab'], '*'], '.', ['E', '|', 'a'], '.', '#']
+#entrada: [[['a', '|', 'b'], '*'], '.', ['ab', '|', '&'], '.', ['ab', '*'], '.', ['&', '|', 'a'], '.', '#']
+#certo
 
 #entrada:['letter', '.', [['letter', '|', 'digit'], '*'], '.', '#']
-#                    .
-#                        #
-#        ['letter', '.', [['letter', '|', 'digit'], '*']]
-#
-#
-#
-
+#?
 
 #entrada: [['a', '*'], '.', '#']
 #certo 
@@ -83,6 +78,7 @@ def criar_arvore(expressao, todos):
             if simbolo in todos.keys() or tamanho <= 1:
                 valor_direita = simbolo
             else:
+
                 for i in range(tamanho):
                     expressao.append(simbolo[i])
                     if i < tamanho-1:
@@ -97,8 +93,8 @@ def criar_arvore(expressao, todos):
 #teste: aaa?.(a | (b | (a.b)))+.(a*.b)
 #saída: [['aaa','|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#']
 
-#teste: (a|b)*.(ab)?.(ab)*.(E|a)
-#saída: [[['a', '|', 'b'], '*'], '.', [['ab', '|', '&'], '.', [['ab'], '*'], '.', ['E', '|', 'a'], '.', '#']
+#teste: (a|b)*.(ab)?.(ab)*.(&|a)
+#saída: [[['a', '|', 'b'], '*'], '.', [['ab', '|', '&'], '.', ['ab', '*'], '.', ['&', '|', 'a'], '.', '#']
 
 #teste: letter.(letter|digit)*
 #saída: ['letter', '.', [['letter', '|', 'digit'], '*']], '.', '#']
@@ -151,8 +147,8 @@ def processar_dependencias(expressao):
 
 #Adicionando operador . de concatenação na expressão regular
 #operadores = ['*', '+', '?', '|', '(', ')', '.']
-#teste: (a|b)*(ab)?(ab)*(E|a)
-#saída: (a|b)*.(ab)?.(ab)*.(E|a)
+#teste: (a|b)*(ab)?(ab)*(&|a)
+#saída: (a|b)*.(ab)?.(ab)*.(&|a)
 
 #teste: letter(letter | digit)*
 #saída: letter.(letter|digit)*
@@ -200,5 +196,5 @@ def ler_arquivo(nome_arquivo):
 
     
 if __name__ == "__main__":
-    criar_arvore([['a','|', '&'], '.', [['a', '|', 'b'], '+'], '.', '#'], {})
+    criar_arvore([['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#'], {})
     
