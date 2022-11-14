@@ -1,5 +1,8 @@
 import copy
 
+from automato_finito import AutomatoFinito
+from utils import remove_repetidos
+
 '''
 Deve aceitar
 -> grupos como:  [a-zA-Z] e [0-9]
@@ -26,12 +29,74 @@ class arvoreExpressao:
         self.first_pos = None
         self.last_pos = None
         self.follow_pos = []
+    
 
+def construir_afd(arvore, follow_pos):
+    Dstates = [arvore.first_pos]
+    states = [arvore.first_pos]
+
+    while Dstates != []:
+        S = Dstates.pop()
+        for a in S:
+            pass
+
+def definir_afd(arvore, follow_pos, entradas, folhas):
+    states = [arvore.first_pos]
+    Dstates = [arvore.first_pos]
+
+    Dtran = []
+
+    while states != []:
+        S = states.pop()
+        transicoes = []
+        for a in entradas:
+            U = []
+            for i, p in enumerate(S):
+                if folhas[i].valor == a:
+                    U = U + follow_pos[p-1]
+            U = remove_repetidos(U)
+
+            if U not in Dstates:
+                Dstates.append(U)
+                states.append(U)
+         
+            for i in range(len(Dstates)):
+                if U == Dstates[i]:
+                    transicoes.append(i) 
+                    break
+        Dtran.append(transicoes)
+
+    print('teste')
+
+#Função recursiva para capturar as entradas possíveis e as folhas da árvore
+def calcular_entradas_e_objetos_das_folhas(arvore, entradas, folhas):
+    global operadores
+    valor = arvore.valor
+    if valor not in operadores:
+        if valor not in entradas:
+            entradas.append(valor)
+        folhas[(arvore.first_pos[0])-1] = arvore
+
+    if arvore.esquerda:
+        calcular_entradas_e_objetos_das_folhas(arvore.esquerda, entradas, folhas)
+    if arvore.direita:
+        calcular_entradas_e_objetos_das_folhas(arvore.direita, entradas, folhas)
+
+#retorna as entradas possíveis da gramática e as folhas da árvore
+def definir_entradas_e_objetos_das_folhas(arvore):
+    entradas = []
+
+    folhas = []
+    for _ in range(contador_first_pos):
+        folhas.append([])
+
+    calcular_entradas_e_objetos_das_folhas(arvore, entradas, folhas)
+    entradas.remove('#')
+    return entradas, folhas
+
+#preenche a lista de follow pos
 def calcular_follow_pos(arvore, follow_pos):
-    try:
-        valor = arvore.valor
-    except:
-        valor = arvore
+    valor = arvore.valor
 
     if valor == '.':
         last_pos_c1 = arvore.esquerda.last_pos
@@ -50,6 +115,7 @@ def calcular_follow_pos(arvore, follow_pos):
     if arvore.direita:
         calcular_follow_pos(arvore.direita, follow_pos)
 
+#retorna uma lista do follow_pos
 def definir_follow_pos(arvore):
     if contador_last_pos != contador_first_pos:
         raise ValueError
@@ -65,10 +131,7 @@ def definir_follow_pos(arvore):
 contador_last_pos = 0
 def calcular_last_pos(arvore, todos):
     global contador_last_pos
-    try:
-        valor = arvore.valor
-    except:
-        valor = arvore
+    valor = arvore.valor
 
     if valor == '.':
         last_pos_esquerda = calcular_last_pos(arvore.esquerda, todos)
@@ -106,11 +169,7 @@ def definir_last_pos(arvore, todos):
 contador_first_pos = 0
 def calcular_first_pos(arvore, todos):
     global contador_first_pos
-
-    try:
-        valor = arvore.valor
-    except:
-        valor = arvore
+    valor = arvore.valor
 
     if valor == '.':
         first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos)
@@ -146,10 +205,7 @@ def definir_first_pos(arvore, todos):
     arvore.first_pos = calcular_first_pos(arvore, todos)
 
 def calcular_nullables(arvore, todos):
-    try:
-        valor = arvore.valor
-    except:
-        valor = arvore
+    valor = arvore.valor
 
     if valor == '.':
         nullable_direita = calcular_nullables(arvore.direita, todos)
@@ -180,13 +236,15 @@ def calcular_nullables(arvore, todos):
 def definir_nullable(arvore, todos):
     arvore.nullable = calcular_nullables(arvore, todos)
 
-def calcular_valores_pos(dict):
+def calcular_valores_pos_e_afd(dict):
     for chave in dict.keys():
         arvore = dict[chave]
         definir_nullable(arvore, dict)
         definir_first_pos(arvore, dict)
         definir_last_pos(arvore, dict)
         follow_pos = definir_follow_pos(arvore)
+        entradas, folhas = definir_entradas_e_objetos_das_folhas(arvore)
+        definir_afd(arvore, follow_pos, entradas, folhas)
     return dict
 
 
@@ -362,5 +420,5 @@ if __name__ == "__main__":
     dict = {}
     dict['exp'] = '(a|b)*abb'
     dict = processar_expressoes(dict)
-    dict = calcular_valores_pos(dict)
+    dict = calcular_valores_pos_e_afd(dict)
     print('bla')
