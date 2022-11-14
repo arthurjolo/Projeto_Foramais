@@ -37,17 +37,23 @@ def calcular_last_pos(arvore, todos, contador=0):
         valor = arvore
 
     if valor == '.':
+        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        last_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
         if arvore.direita.nullable:
-            arvore.last_pos = calcular_last_pos(arvore.direita, todos, contador)+calcular_last_pos(arvore.esquerda, todos, contador)
+            arvore.last_pos = last_pos_direita+last_pos_esquerda
         else:
-            arvore.last_pos = calcular_last_pos(arvore.direita, todos, contador)
+            arvore.last_pos = last_pos_direita
     elif valor == '|':
-        arvore.last_pos = calcular_last_pos(arvore.esquerda, todos)+calcular_last_pos(arvore.direita, todos, contador)
+        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        last_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
+        arvore.last_pos = last_pos_esquerda+last_pos_direita
     elif valor == '*':
-        arvore.last_pos = calcular_last_pos(arvore.esquerda, todos, contador)
+        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        arvore.last_pos = last_pos_esquerda
     elif valor == '+':
         #rever essa regra com a professora
-        arvore.last_pos = calcular_last_pos(arvore.esquerda, todos, contador)
+        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        arvore.last_pos = last_pos_esquerda
     elif valor == '&':
         arvore.last_pos = []
     else:
@@ -55,10 +61,13 @@ def calcular_last_pos(arvore, todos, contador=0):
             arvore.last_pos = todos[valor].first_pos
         else:
             contador += 1
-            return [contador]
+            arvore.last_pos [contador]
+    
+    return arvore.last_pos
     
 def definir_last_pos(arvore, todos):
-    calcular_last_pos(arvore, todos, contador=0)
+    arvore.last_pos = calcular_last_pos(arvore, todos, contador=0)
+    return arvore.last_pos
 
 def calcular_first_pos(arvore, todos, contador=0):
     try:
@@ -67,17 +76,23 @@ def calcular_first_pos(arvore, todos, contador=0):
         valor = arvore
 
     if valor == '.':
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        first_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
         if arvore.esquerda.nullable:
-            arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)+calcular_first_pos(arvore.direita, todos, contador)
+            arvore.first_pos = first_pos_esquerda+first_pos_direita
         else:
             arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
     elif valor == '|':
-        arvore.first_pos = calcular_first_pos(arvore.esquerda, todos)+calcular_first_pos(arvore.direita, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        first_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
+        arvore.first_pos = first_pos_esquerda+first_pos_direita
     elif valor == '*':
-        arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        arvore.first_pos = first_pos_esquerda
     elif valor == '+':
         #rever essa regra com a professora
-        arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        arvore.first_pos = first_pos_esquerda
     elif valor == '&':
         arvore.first_pos = []
     else:
@@ -85,10 +100,13 @@ def calcular_first_pos(arvore, todos, contador=0):
             arvore.first_pos = todos[valor].first_pos
         else:
             contador += 1
-            return [contador]
+            arvore.first_pos = [contador]
     
+    return arvore.first_pos
+
 def definir_first_pos(arvore, todos):
-    calcular_first_pos(arvore, todos, contador=0)
+    arvore.first_pos = calcular_first_pos(arvore, todos, contador=0)
+    return arvore.first_pos
 
 def calcular_nullables(arvore, todos):
     try:
@@ -101,29 +119,37 @@ def calcular_nullables(arvore, todos):
         nullable_esquerda = calcular_nullables(arvore.esquerda, todos)
         arvore.nullable = (nullable_esquerda and nullable_direita)
     elif valor == '|':
-        arvore.nullable = (calcular_nullables(arvore.esquerda, todos) or calcular_nullables(arvore.direita, todos))
+        nullable_direita = calcular_nullables(arvore.direita, todos)
+        nullable_esquerda = calcular_nullables(arvore.esquerda, todos)
+        arvore.nullable = (nullable_esquerda or nullable_direita)
     elif valor == '*':
+        arvore.esquerda.nullable = calcular_nullables(arvore.esquerda, todos)
         arvore.nullable = True
     elif valor == '+':
+        arvore.esquerda.nullable = calcular_nullables(arvore.esquerda, todos)
         arvore.nullable = False
     elif valor == '&':
-        arvore.nullable = True
+        return True
+    elif valor == '#':
+        arvore.nullable = False
     else:
         if valor in todos.keys():
             arvore.nullable = (todos[valor].nullable)
         else:
-            return False
+            arvore.nullable = False
+    
+    return arvore.nullable
 
 def definir_nullable(arvore, todos):
-    calcular_nullables(arvore, todos)
-
+    arvore.nullable = calcular_nullables(arvore, todos)
+    return arvore.nullable
 
 def calcular_valores_pos(dict):
     for chave in dict.keys():
         arvore = dict[chave]
-        definir_nullable(arvore, dict)
-        definir_first_pos(arvore, dict)
-        definir_last_pos(arvore, dict)
+        arvore.nullable = definir_nullable(arvore, dict)
+        arvore.first_pos = definir_first_pos(arvore, dict)
+        arvore.last_pos = definir_last_pos(arvore, dict)
     return dict
 
 
@@ -170,9 +196,8 @@ def criar_arvore(expressao, todos):
         else:
             tamanho = len(simbolo)
             if simbolo in todos.keys() or tamanho <= 1:
-                valor_direita = simbolo
+                valor_direita = arvoreExpressao(valor=simbolo)
             else:
-
                 for i in range(tamanho):
                     expressao.append(simbolo[i])
                     if i < tamanho-1:
