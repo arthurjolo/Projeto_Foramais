@@ -30,29 +30,31 @@ class arvoreExpressao:
 def calcular_follow_pos(arvore):
     pass
 
-def calcular_last_pos(arvore, todos, contador=0):
+contador_last_pos = 0
+def calcular_last_pos(arvore, todos):
+    global contador_last_pos
     try:
         valor = arvore.valor
     except:
         valor = arvore
 
     if valor == '.':
-        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
-        last_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
+        last_pos_esquerda = calcular_last_pos(arvore.esquerda, todos)
+        last_pos_direita = calcular_last_pos(arvore.direita, todos)
         if arvore.direita.nullable:
             arvore.last_pos = last_pos_direita+last_pos_esquerda
         else:
             arvore.last_pos = last_pos_direita
     elif valor == '|':
-        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
-        last_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
+        last_pos_esquerda = calcular_last_pos(arvore.esquerda, todos)
+        last_pos_direita = calcular_last_pos(arvore.direita, todos)
         arvore.last_pos = last_pos_esquerda+last_pos_direita
     elif valor == '*':
-        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        last_pos_esquerda = calcular_last_pos(arvore.esquerda, todos)
         arvore.last_pos = last_pos_esquerda
     elif valor == '+':
         #rever essa regra com a professora
-        last_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        last_pos_esquerda = calcular_last_pos(arvore.esquerda, todos)
         arvore.last_pos = last_pos_esquerda
     elif valor == '&':
         arvore.last_pos = []
@@ -60,38 +62,41 @@ def calcular_last_pos(arvore, todos, contador=0):
         if valor in todos.keys():
             arvore.last_pos = todos[valor].first_pos
         else:
-            contador += 1
-            arvore.last_pos [contador]
+            if arvore.last_pos == None:
+                contador_last_pos += 1
+                arvore.last_pos = [contador_last_pos]
     
     return arvore.last_pos
     
 def definir_last_pos(arvore, todos):
-    arvore.last_pos = calcular_last_pos(arvore, todos, contador=0)
-    return arvore.last_pos
+    arvore.last_pos = calcular_last_pos(arvore, todos)
 
-def calcular_first_pos(arvore, todos, contador=0):
+contador_first_pos = 0
+def calcular_first_pos(arvore, todos):
+    global contador_first_pos
+
     try:
         valor = arvore.valor
     except:
         valor = arvore
 
     if valor == '.':
-        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
-        first_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos)
+        first_pos_direita = calcular_first_pos(arvore.direita, todos)
         if arvore.esquerda.nullable:
             arvore.first_pos = first_pos_esquerda+first_pos_direita
         else:
-            arvore.first_pos = calcular_first_pos(arvore.esquerda, todos, contador)
+            arvore.first_pos = calcular_first_pos(arvore.esquerda, todos)
     elif valor == '|':
-        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
-        first_pos_direita = calcular_first_pos(arvore.direita, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos)
+        first_pos_direita = calcular_first_pos(arvore.direita, todos)
         arvore.first_pos = first_pos_esquerda+first_pos_direita
     elif valor == '*':
-        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos)
         arvore.first_pos = first_pos_esquerda
     elif valor == '+':
         #rever essa regra com a professora
-        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos, contador)
+        first_pos_esquerda = calcular_first_pos(arvore.esquerda, todos)
         arvore.first_pos = first_pos_esquerda
     elif valor == '&':
         arvore.first_pos = []
@@ -99,14 +104,14 @@ def calcular_first_pos(arvore, todos, contador=0):
         if valor in todos.keys():
             arvore.first_pos = todos[valor].first_pos
         else:
-            contador += 1
-            arvore.first_pos = [contador]
+            if arvore.first_pos == None:
+                contador_first_pos += 1
+                arvore.first_pos = [contador_first_pos]
     
     return arvore.first_pos
 
 def definir_first_pos(arvore, todos):
-    arvore.first_pos = calcular_first_pos(arvore, todos, contador=0)
-    return arvore.first_pos
+    arvore.first_pos = calcular_first_pos(arvore, todos)
 
 def calcular_nullables(arvore, todos):
     try:
@@ -142,14 +147,13 @@ def calcular_nullables(arvore, todos):
 
 def definir_nullable(arvore, todos):
     arvore.nullable = calcular_nullables(arvore, todos)
-    return arvore.nullable
 
 def calcular_valores_pos(dict):
     for chave in dict.keys():
         arvore = dict[chave]
-        arvore.nullable = definir_nullable(arvore, dict)
-        arvore.first_pos = definir_first_pos(arvore, dict)
-        arvore.last_pos = definir_last_pos(arvore, dict)
+        definir_nullable(arvore, dict)
+        definir_first_pos(arvore, dict)
+        definir_last_pos(arvore, dict)
     return dict
 
 
