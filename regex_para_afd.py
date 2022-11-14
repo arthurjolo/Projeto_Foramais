@@ -25,10 +25,42 @@ class arvoreExpressao:
         self.nullable = None #True or False
         self.first_pos = None
         self.last_pos = None
-        self.follow_pos = None
+        self.follow_pos = []
 
-def calcular_follow_pos(arvore):
-    pass
+def calcular_follow_pos(arvore, follow_pos):
+    try:
+        valor = arvore.valor
+    except:
+        valor = arvore
+
+    if valor == '.':
+        last_pos_c1 = arvore.esquerda.last_pos
+        first_pos_c2 = arvore.direita.first_pos
+        for i in last_pos_c1:
+            follow_pos[i-1] = follow_pos[i-1] + first_pos_c2
+    #rever regra com a professora
+    elif valor in ['*', '+']:
+        last_pos_n = arvore.last_pos
+        first_pos_n = arvore.first_pos
+        for i in last_pos_n:
+            follow_pos[i-1] = follow_pos[i-1] + first_pos_n
+
+    if arvore.esquerda:
+        calcular_follow_pos(arvore.esquerda, follow_pos)
+    if arvore.direita:
+        calcular_follow_pos(arvore.direita, follow_pos)
+
+def definir_follow_pos(arvore):
+    if contador_last_pos != contador_first_pos:
+        raise ValueError
+
+    follow_pos = []
+    for _ in range(contador_first_pos):
+        follow_pos.append([])
+
+    calcular_follow_pos(arvore, follow_pos)
+    
+    return follow_pos
 
 contador_last_pos = 0
 def calcular_last_pos(arvore, todos):
@@ -154,6 +186,7 @@ def calcular_valores_pos(dict):
         definir_nullable(arvore, dict)
         definir_first_pos(arvore, dict)
         definir_last_pos(arvore, dict)
+        follow_pos = definir_follow_pos(arvore)
     return dict
 
 
