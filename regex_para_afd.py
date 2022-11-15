@@ -81,6 +81,7 @@ def calcular_entradas_e_objetos_das_folhas(arvore, entradas, folhas):
     if valor not in operadores and valor != empty:
         if valor not in entradas:
             entradas.append(valor)
+        #cada posição da lista folhas representa as folhas da árvore de baixo pra cima (ou seja, em ordem)
         folhas[(arvore.first_pos[0])-1] = arvore
 
     if arvore.esquerda:
@@ -439,11 +440,15 @@ def processar_expressoes(dict):
 #lê arquivo de entrada e retorna uma dict com todas as entradas de Regex e seus valores como string
 def ler_arquivo(nome_arquivo):
     dict = {}
-    with open(nome_arquivo) as f:
-        linhas = f.readlines()
-        for linha in linhas:
-            nome, expressao = linha.split(':')
-            dict[nome] = expressao
+    try:
+        with open(nome_arquivo) as f:
+            linhas = f.readlines()
+            for linha in linhas:
+                nome, expressao = linha.split(':')
+                dict[nome] = expressao
+    except:
+        ValueError('Não há arquivo com esse nome!')
+
     return dict
 
 def print_resultados(dict_adf):
@@ -488,5 +493,5 @@ def regex_para_afd(nome_do_arquivo):
     print_resultados(dict_afd)
 
 if __name__ == "__main__":
-    regex_para_afd("./regex_entrada/regex.txt")
+    regex_para_afd("./regex_entrada/regex3.txt")
     
