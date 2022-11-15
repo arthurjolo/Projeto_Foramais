@@ -12,18 +12,21 @@ class AutomatoFinito:
 
     def get_n_estados(self):
         return self.n_estados
+
+    def get_estado_inicial(self):
+        return self.estado_inicial
+
+    def get_estados_finais(self):
+        return self.estados_finais[:]
+
+    def get_tabela_de_transicoes(self):
+        return self.tabela_transicoes
     
     def get_estados(self):
         return self.estados
 
     def get_alfabeto(self):
         return self.alfabeto[:]
-
-    def get_estados_finais(self):
-        return self.estados_finais[:]
-    
-    def get_tabela_de_transicoes(self):
-        return self.tabela_transicoes
 
     def transition(self, qi, letter):  #return [int:estado]
         pass

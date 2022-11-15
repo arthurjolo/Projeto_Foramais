@@ -20,6 +20,9 @@ er: a?(a | b)+
 operadores = ['*', '+', '?', '|', '(', ')', '.']
 empty = '&'
 
+contador_last_pos = 0
+contador_first_pos = 0
+
 class arvoreExpressao:
     def __init__(self, valor, esquerda=None, direita=None):
         self.valor = valor
@@ -28,23 +31,14 @@ class arvoreExpressao:
         self.nullable = None #True or False
         self.first_pos = None
         self.last_pos = None
-        self.follow_pos = []
     
-
-def construir_afd(arvore, follow_pos):
-    Dstates = [arvore.first_pos]
-    states = [arvore.first_pos]
-
-    while Dstates != []:
-        S = Dstates.pop()
-        for a in S:
-            pass
 
 def definir_afd(arvore, follow_pos, entradas, folhas):
     states = [arvore.first_pos]
     Dstates = [arvore.first_pos]
 
     Dtran = []
+    final_states = []
 
     while states != []:
         S = states.pop()
@@ -59,6 +53,9 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
             if U not in Dstates:
                 Dstates.append(U)
                 states.append(U)
+
+            if len(folhas) in U:
+                final_states.append(len(Dstates))
          
             for i in range(len(Dstates)):
                 if U == Dstates[i]:
@@ -66,13 +63,17 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
                     break
         Dtran.append(transicoes)
 
-    print('teste')
+    estados = []
+    for i in range(len(Dstates)):
+        estados.append(i)
+    return AutomatoFinito(len(Dstates), 0, final_states, Dtran, estados, entradas)
 
 #Função recursiva para capturar as entradas possíveis e as folhas da árvore
 def calcular_entradas_e_objetos_das_folhas(arvore, entradas, folhas):
     global operadores
+    global empty
     valor = arvore.valor
-    if valor not in operadores:
+    if valor not in operadores and valor != empty:
         if valor not in entradas:
             entradas.append(valor)
         folhas[(arvore.first_pos[0])-1] = arvore
@@ -128,7 +129,6 @@ def definir_follow_pos(arvore):
     
     return follow_pos
 
-contador_last_pos = 0
 def calcular_last_pos(arvore, todos):
     global contador_last_pos
     valor = arvore.valor
@@ -166,7 +166,6 @@ def calcular_last_pos(arvore, todos):
 def definir_last_pos(arvore, todos):
     arvore.last_pos = calcular_last_pos(arvore, todos)
 
-contador_first_pos = 0
 def calcular_first_pos(arvore, todos):
     global contador_first_pos
     valor = arvore.valor
@@ -236,17 +235,18 @@ def calcular_nullables(arvore, todos):
 def definir_nullable(arvore, todos):
     arvore.nullable = calcular_nullables(arvore, todos)
 
-def calcular_valores_pos_e_afd(dict):
-    for chave in dict.keys():
-        arvore = dict[chave]
-        definir_nullable(arvore, dict)
-        definir_first_pos(arvore, dict)
-        definir_last_pos(arvore, dict)
+def calcular_valores_pos_e_afd(dict_regex):
+    dict_afd = {}
+    for chave in dict_regex.keys():
+        arvore = dict_regex[chave]
+        definir_nullable(arvore, dict_regex)
+        definir_first_pos(arvore, dict_regex)
+        definir_last_pos(arvore, dict_regex)
         follow_pos = definir_follow_pos(arvore)
         entradas, folhas = definir_entradas_e_objetos_das_folhas(arvore)
-        definir_afd(arvore, follow_pos, entradas, folhas)
-    return dict
-
+        afd = definir_afd(arvore, follow_pos, entradas, folhas)
+        dict_afd[chave] = afd
+    return dict_regex, dict_afd
 
 #Percorrer expressão e retornar o nodo do topo da árvore
 #entrada: [['a','|', '&'], '.', [['a', '|', 'b'], '+'], '.', '#']
@@ -399,7 +399,7 @@ def adicionar_concat(expressao):
 #retorna dict com todas as entradas de Regex, com as suas árvores como valores
 def processar_expressoes(dict):
     for chave in dict.keys():
-        expressao_regular = dict[chave]
+        expressao_regular = dict[chave].rstrip('\n').strip(' ')
         expressao_regular = adicionar_concat(expressao_regular)
         expressao_regular = processar_dependencias(expressao_regular)
         dict[chave] = criar_arvore(expressao_regular, dict)
@@ -410,15 +410,51 @@ def ler_arquivo(nome_arquivo):
     dict = {}
     with open(nome_arquivo) as f:
         linhas = f.readlines()
-        nome, expressao = linhas.split(':')
-        dict[nome] = expressao
+        for linha in linhas:
+            nome, expressao = linha.split(':')
+            dict[nome] = expressao
     return dict
 
+def print_resultados(dict_adf):
+    for chave in dict_adf.keys():
+        arquivo = open(f"afd_{chave}.txt", "w")
+        automato = dict_adf[chave]
+        linhas = [chave]
+
+        print(automato.get_n_estados())
+        linhas.append('\n'+str(automato.get_n_estados()))
+
+        print(automato.get_estado_inicial())
+        linhas.append('\n'+str(automato.get_estado_inicial()))
+
+        for estado in automato.get_estados_finais():
+            print(estado)
+            linhas.append('\n'+str(estado))
+
+        alfabeto = automato.get_alfabeto()
+
+        print(','.join(alfabeto))
+        linhas.append('\n'+','.join(alfabeto))
+
+        tabela_de_transicoes = automato.get_tabela_de_transicoes()
+        for i in range(len(tabela_de_transicoes)):
+            for j in range(len(tabela_de_transicoes[i])):
+                estado_origem = str(i)
+                simbolo = alfabeto[j]
+                estado_destino = str(tabela_de_transicoes[i][j])
+
+                print(','.join([estado_origem,simbolo,estado_destino]))
+                linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
+
+        arquivo.writelines(linhas)
+        arquivo.close()
+
+def regex_para_afd(nome_do_arquivo):
+    dict = ler_arquivo(nome_do_arquivo)
+    dict = processar_expressoes(dict)
+    dict_regex, dict_afd = calcular_valores_pos_e_afd(dict)
+    print_resultados(dict_afd)
 
 if __name__ == "__main__":
-    #criar_arvore([['aaa', '|', '&'],'.', [['a', '|', ['b', '|', ['a', '.', 'b']]], '+'], '.', [['a', '*'],'.','b'], '.', '#'], {})
-    dict = {}
-    dict['exp'] = '(a|b)*abb'
-    dict = processar_expressoes(dict)
-    dict = calcular_valores_pos_e_afd(dict)
-    print('bla')
+    regex_para_afd("regex.txt")
+    
