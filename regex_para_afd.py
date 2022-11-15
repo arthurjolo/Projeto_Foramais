@@ -1,7 +1,7 @@
 import copy
 
 from automato_finito import AutomatoFinito
-from utils import remove_repetidos
+from utils import remove_repetidos, retornar_todos_entre, colocar_operacao_entre_elementos
 
 '''
 Deve aceitar
@@ -16,6 +16,10 @@ id: letter(letter | digit)*
 2.
 er: a?(a | b)+
 '''
+
+alfabeto_minusculo = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l' ,'m', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+alfabeto_maiusculo = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L' ,'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+numeros = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 operadores = ['*', '+', '?', '|', '(', ')', '.']
 empty = '&'
@@ -45,8 +49,8 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
         transicoes = []
         for a in entradas:
             U = []
-            for i, p in enumerate(S):
-                if folhas[i].valor == a:
+            for p in S:
+                if folhas[p-1].valor == a:
                     U = U + follow_pos[p-1]
             U = remove_repetidos(U)
 
@@ -55,7 +59,8 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
                 states.append(U)
 
             if len(folhas) in U:
-                final_states.append(len(Dstates))
+                if len(Dstates) not in final_states:
+                    final_states.append(len(Dstates))
          
             for i in range(len(Dstates)):
                 if U == Dstates[i]:
@@ -273,6 +278,9 @@ def calcular_valores_pos_e_afd(dict_regex):
 #entrada: ['#']
 def criar_arvore(expressao, todos):
     global operadores
+    global alfabeto_minusculo
+    global alfabeto_maiusculo
+    global numeros
     valor_direita = None
 
     while expressao != []:
@@ -290,8 +298,31 @@ def criar_arvore(expressao, todos):
                                             esquerda=criar_arvore(expressao, todos))
         else:
             tamanho = len(simbolo)
-            if simbolo in todos.keys() or tamanho <= 1:
+            if simbolo in todos.keys():
+                valor_direita = todos[simbolo].esquerda
+            elif tamanho <= 1:
                 valor_direita = arvoreExpressao(valor=simbolo)
+            elif simbolo[0] == '[':
+                possiveis = []
+                primeiro = None
+                ultimo = None
+                for i in range(1, len(simbolo), 1):
+                    if primeiro:
+                        if ultimo:
+                            if primeiro in alfabeto_minusculo:
+                                lista_possiveis = retornar_todos_entre(alfabeto_minusculo, primeiro, ultimo)
+                            elif primeiro in alfabeto_maiusculo:
+                                lista_possiveis = retornar_todos_entre(alfabeto_maiusculo, primeiro, ultimo)
+                            elif primeiro in numeros:
+                                lista_possiveis = retornar_todos_entre(numeros, primeiro, ultimo)
+                            possiveis += colocar_operacao_entre_elementos(lista_possiveis, '|')
+                            primeiro = None
+                            ultimo = None
+                        else:
+                            ultimo = simbolo[i]
+                    else:
+                        primeiro = simbolo[i] 
+                valor_direita =  criar_arvore(possiveis, todos)                  
             else:
                 for i in range(tamanho):
                     expressao.append(simbolo[i])
@@ -417,9 +448,10 @@ def ler_arquivo(nome_arquivo):
 
 def print_resultados(dict_adf):
     for chave in dict_adf.keys():
-        arquivo = open(f"afd_{chave}.txt", "w")
+        arquivo = open(f"./regex_afd_saida/afd_{chave}.txt", "w")
         automato = dict_adf[chave]
         linhas = [chave]
+        print(chave)
 
         print(automato.get_n_estados())
         linhas.append('\n'+str(automato.get_n_estados()))
@@ -456,5 +488,5 @@ def regex_para_afd(nome_do_arquivo):
     print_resultados(dict_afd)
 
 if __name__ == "__main__":
-    regex_para_afd("regex.txt")
+    regex_para_afd("./regex_entrada/regex.txt")
     
