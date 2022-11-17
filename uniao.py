@@ -10,15 +10,16 @@ def uniao(automato1, automato2):
     estados_finais = []
 
     #construindo os estados do novo automato
-    for e in automato1.get_estados():
-        estados.append(e+1)
+    #for e in automato1.get_estados():
+    #    estados.append(e+1)
     
-    for e in automato2.get_estados():
-        estados.append(e + automato1.get_n_estados() + 1)
+    #for e in automato2.get_estados():
+    #    estados.append(e + automato1.get_n_estados() + 1)
 
-    print("estados unizado: ", estados)
+    #print("estados unizado: ", estados)
 
-    n_estados = len(estados) #automato1.get_n_estados() + automato1.get_n_estados() + 1
+    #n_estados = len(estados)
+    n_estados = automato1.get_n_estados() + automato2.get_n_estados() + 1
     #contruindo o alfabeto do novo automato
     for l in automato1.get_alfabeto():
         if not(l in alfabeto):
@@ -45,7 +46,7 @@ def uniao(automato1, automato2):
     
     #transição do estado inicial(0) por epsilon(posição 0 do alfabeto) = estados iniciais de a1 e a2
     tabela_de_transicao[0][0] = [1, automato1.get_n_estados() + 1]
-
+    print(n_estados)
     for i in range(1, n_estados):
         print(i)
         if (i <= automato1.get_n_estados()):
@@ -61,6 +62,7 @@ def uniao(automato1, automato2):
             print("\nautomato 2")
             print("estado : ",estado)
         alfabeto_automato = automato.get_alfabeto()
+        
         automato_trasicoes = automato.get_tabela_de_transicoes()
         for j in range(len(alfabeto)):
             if alfabeto[j] in alfabeto_automato:
@@ -96,12 +98,12 @@ transicoes1[1][0] = 2
 transicoes1[1][1] = 1
 transicoes1[2][0] = 2
 transicoes1[2][1] = 1
-automta1 = AutomatoFinito(3,0,[2],transicoes1, [0,1,2], alfabeto)
+automta1 = AutomatoFinito("automata1.txt")
 transicoes2[0][0] = 1
 transicoes2[0][1] = 0
 transicoes2[1][0] = 0
 transicoes2[1][1] = 1
-automta2 = AutomatoFinito(2,0,[1],transicoes2,[0,1], alfabeto)
+automta2 = AutomatoFinito("automata2.txt")
 
 unizado = uniao(automta1, automta2)
 

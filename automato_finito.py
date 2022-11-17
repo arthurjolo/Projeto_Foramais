@@ -1,14 +1,15 @@
 from contextlib import nullcontext
+import math
 
 
 class AutomatoFinito:
-    def __init__(self, n_estados, estado_inicial, estados_finais, tabela_transicoes, estados, alfabeto):
-        self.n_estados = n_estados
-        self.estado_inicial = estado_inicial
-        self.estados_finais = estados_finais #[]
-        self.tabela_transicoes =  tabela_transicoes #[][]
-        self.estados = estados #[]
-        self.alfabeto = alfabeto #[]
+    def __init__(self, arquivo : str):
+        self.n_estados = 0
+        self.estado_inicial = 0
+        self.estados_finais = [] #[]
+        self.tabela_transicoes = [] #=  tabela_transicoes #[][]
+        self.alfabeto =[]# alfabeto #[]
+        self.ler_arquivo(arquivo)
 
     def get_n_estados(self):
         return self.n_estados
@@ -30,3 +31,39 @@ class AutomatoFinito:
 
     def transition(self, qi, letter):  #return [int:estado]
         pass
+
+    def ler_arquivo(self, arquivo):
+        
+        with open(arquivo, 'r') as file:
+            linha1 = file.readline()
+            
+            #leitura do número de estados
+            linha1 = file.readline()
+            self.n_estados = int(linha1)
+            
+            #leitura do estado inicial
+            linha1 = file.readline()
+            self.estado_inicial = int(linha1)
+            
+            #leitura dos estados finais
+            linha1 = file.readline().split(',')
+            for f in linha1:
+                self.estados_finais.append(int(f))
+            
+            #leitura do alfabeto
+            linha1 = file.readline().split(',')
+            for l in linha1:
+                self.alfabeto.append(l[0])
+
+            #leitura da tabela de transições
+            for i in range(self.n_estados):
+                linha_ = []
+                for j in range(len(self.alfabeto)):
+                    linha_.append(math.inf)
+                self.tabela_transicoes.append(linha_)
+            while True:
+                linha = file.readline()
+                if not linha:
+                    break
+                linha = linha.split(',')
+                self.tabela_transicoes[int(linha[0])][self.alfabeto.index(linha[1])] = int(linha[2])
