@@ -451,26 +451,22 @@ def ler_arquivo(nome_arquivo):
 
     return dict
 
-def print_resultados(dict_adf):
+def escrever_resultados(dict_adf):
+    arquivos_saida = []
     for chave in dict_adf.keys():
-        arquivo = open(f"./regex_afd_saida/afd_{chave}.txt", "w")
+        nome_arquivo = f"./regex_afd_saida/afd_{chave}.txt"
+        arquivo = open(nome_arquivo, "w")
         automato = dict_adf[chave]
         linhas = [chave]
-        print(chave)
 
-        print(automato.get_n_estados())
         linhas.append('\n'+str(automato.get_n_estados()))
-
-        print(automato.get_estado_inicial())
         linhas.append('\n'+str(automato.get_estado_inicial()))
 
         for estado in automato.get_estados_finais():
-            print(estado)
             linhas.append('\n'+str(estado))
 
         alfabeto = automato.get_alfabeto()
 
-        print(','.join(alfabeto))
         linhas.append('\n'+','.join(alfabeto))
 
         tabela_de_transicoes = automato.get_tabela_de_transicoes()
@@ -479,18 +475,19 @@ def print_resultados(dict_adf):
                 estado_origem = str(i)
                 simbolo = alfabeto[j]
                 estado_destino = str(tabela_de_transicoes[i][j])
-
-                print(','.join([estado_origem,simbolo,estado_destino]))
                 linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
 
         arquivo.writelines(linhas)
         arquivo.close()
 
+        arquivos_saida.append(nome_arquivo)
+    return arquivos_saida
+
 def regex_para_afd(nome_do_arquivo):
     dict = ler_arquivo(nome_do_arquivo)
     dict = processar_expressoes(dict)
-    dict_regex, dict_afd = calcular_valores_pos_e_afd(dict)
-    print_resultados(dict_afd)
+    dict_afd = calcular_valores_pos_e_afd(dict)
+    return escrever_resultados(dict_afd)
 
 if __name__ == "__main__":
     regex_para_afd("./regex_entrada/regex3.txt")
