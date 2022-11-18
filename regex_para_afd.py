@@ -74,9 +74,6 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
                     break
         Dtran.append(transicoes)
 
-    estados = []
-    for i in range(len(Dstates)):
-        estados.append(i)
     return Automato(len(Dstates), 0, final_states, Dtran, entradas)
 
 #Função recursiva para capturar as entradas possíveis e as folhas da árvore
