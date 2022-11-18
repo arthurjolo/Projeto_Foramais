@@ -1,6 +1,5 @@
 import copy
 
-from automato_finito import AutomatoFinito
 from utils import remove_repetidos, retornar_todos_entre, colocar_operacao_entre_elementos
 
 '''
@@ -36,6 +35,13 @@ class arvoreExpressao:
         self.first_pos = None
         self.last_pos = None
     
+class Automato:
+    def __init__(self, n_estados, estado_inicial, estados_finais, tabela_transicoes, alfabeto):
+        self.n_estados = n_estados
+        self.estado_inicial = estado_inicial
+        self.estados_finais = estados_finais
+        self.tabela_transicoes = tabela_transicoes
+        self.alfabeto = alfabeto
 
 def definir_afd(arvore, follow_pos, entradas, folhas):
     states = [arvore.first_pos]
@@ -71,7 +77,7 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
     estados = []
     for i in range(len(Dstates)):
         estados.append(i)
-    return AutomatoFinito(len(Dstates), 0, final_states, Dtran, estados, entradas)
+    return Automato(len(Dstates), 0, final_states, Dtran, entradas)
 
 #Função recursiva para capturar as entradas possíveis e as folhas da árvore
 def calcular_entradas_e_objetos_das_folhas(arvore, entradas, folhas):
@@ -252,7 +258,7 @@ def calcular_valores_pos_e_afd(dict_regex):
         entradas, folhas = definir_entradas_e_objetos_das_folhas(arvore)
         afd = definir_afd(arvore, follow_pos, entradas, folhas)
         dict_afd[chave] = afd
-    return dict_regex, dict_afd
+    return dict_afd
 
 #Percorrer expressão e retornar o nodo do topo da árvore
 #entrada: [['a','|', '&'], '.', [['a', '|', 'b'], '+'], '.', '#']
@@ -459,17 +465,17 @@ def escrever_resultados(dict_adf):
         automato = dict_adf[chave]
         linhas = [chave]
 
-        linhas.append('\n'+str(automato.get_n_estados()))
-        linhas.append('\n'+str(automato.get_estado_inicial()))
+        linhas.append('\n'+str(automato.n_estados))
+        linhas.append('\n'+str(automato.estado_inicial))
 
-        for estado in automato.get_estados_finais():
+        for estado in automato.estados_finais:
             linhas.append('\n'+str(estado))
 
-        alfabeto = automato.get_alfabeto()
+        alfabeto = automato.alfabeto
 
         linhas.append('\n'+','.join(alfabeto))
 
-        tabela_de_transicoes = automato.get_tabela_de_transicoes()
+        tabela_de_transicoes = automato.tabela_transicoes
         for i in range(len(tabela_de_transicoes)):
             for j in range(len(tabela_de_transicoes[i])):
                 estado_origem = str(i)
@@ -490,5 +496,5 @@ def regex_para_afd(nome_do_arquivo):
     return escrever_resultados(dict_afd)
 
 if __name__ == "__main__":
-    regex_para_afd("./regex_entrada/regex3.txt")
+    print(regex_para_afd("./regex_entrada/regex1.txt"))
     
