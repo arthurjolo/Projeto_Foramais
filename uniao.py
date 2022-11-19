@@ -95,8 +95,9 @@ def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabe
         for j in range(len(tabela_de_transicoes[i])):
             estado_origem = str(i)
             simbolo = alfabeto[j]
-            estado_destino = str(tabela_de_transicoes[i][j])
-            linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
+            if tabela_de_transicoes[i][j] != math.inf:
+                estado_destino = str(tabela_de_transicoes[i][j])
+                linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
 
     arquivo.writelines(linhas)
     arquivo.close()
