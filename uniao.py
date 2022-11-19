@@ -101,7 +101,6 @@ def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabe
 
     arquivo.writelines(linhas)
     arquivo.close()
-    print(linhas)
     return nome_arquivo
 
 
@@ -120,17 +119,3 @@ for i in range(2):
         for j in range(len(alfabeto)):
             linha.append(math.inf)
         transicoes2.append(linha)
-transicoes1[0][0] = 1
-transicoes1[0][1] = math.inf
-transicoes1[1][0] = 2
-transicoes1[1][1] = 1
-transicoes1[2][0] = 2
-transicoes1[2][1] = 1
-automta1 = AutomatoFinito("./regex_afd_saida/afd_er1.txt")
-transicoes2[0][0] = 1
-transicoes2[0][1] = 0
-transicoes2[1][0] = 0
-transicoes2[1][1] = 1
-automta2 = AutomatoFinito("./regex_afd_saida/afd_er2.txt")
-
-uniao(automta1, automta2)
