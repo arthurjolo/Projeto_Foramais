@@ -9,6 +9,7 @@ class AutomatoFinito:
         self.estados_finais = [] #[]
         self.tabela_transicoes = [] #=  tabela_transicoes #[][]
         self.alfabeto =[]# alfabeto #[]
+        self.nome = ""
         self.ler_arquivo(arquivo)
 
     def get_n_estados(self):
@@ -32,11 +33,17 @@ class AutomatoFinito:
     def transition(self, qi, letter):  #return [int:estado]
         pass
 
+    def set_nome(self, nome):
+        self.nome = nome
+
     def ler_arquivo(self, arquivo):
         
         with open(arquivo, 'r') as file:
             linha1 = file.readline()
-            
+            for c in linha1:
+                if c != "\n":
+                    self.nome = self.nome + c
+
             #leitura do número de estados
             linha1 = file.readline()
             self.n_estados = int(linha1)

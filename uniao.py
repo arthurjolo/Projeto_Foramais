@@ -5,7 +5,7 @@ from automato_finito import AutomatoFinito
 def uniao(automato1, automato2):
     estado_inicial = 0
     estados = [0]
-    alfabeto = [math.inf]
+    alfabeto = []
     tabela_de_transicao = []
     estados_finais = []
 
@@ -21,6 +21,7 @@ def uniao(automato1, automato2):
     #n_estados = len(estados)
     n_estados = automato1.get_n_estados() + automato2.get_n_estados() + 1
     #contruindo o alfabeto do novo automato
+    alfabeto.append("epsilon")
     for l in automato1.get_alfabeto():
         if not(l in alfabeto):
             alfabeto.append(l)
@@ -72,9 +73,35 @@ def uniao(automato1, automato2):
             else:
                 tabela_de_transicao[i][j] =math.inf
     
-    return AutomatoFinito(n_estados, estado_inicial, estados_finais, tabela_de_transicao, estados, alfabeto)
+    return escrever_afd("uniao_"+automato1.nome+"_"+automato2.nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_de_transicao)
 
+def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
+    nome_arquivo = f"./regex_afd_saida/afd_"+ nome +".txt"
+    arquivo = open(nome_arquivo, "w")
+    linhas = [nome]
 
+    linhas.append('\n'+str(n_estados))
+    linhas.append('\n'+str(estado_inicial))
+
+    estados_finais_str = []
+    for estado in estados_finais:
+        estados_finais_str.append(str(estado))
+    linhas.append('\n'+','.join(estados_finais_str))
+
+    linhas.append('\n'+','.join(alfabeto))
+
+    tabela_de_transicoes = tabela_transicoes
+    for i in range(len(tabela_de_transicoes)):
+        for j in range(len(tabela_de_transicoes[i])):
+            estado_origem = str(i)
+            simbolo = alfabeto[j]
+            estado_destino = str(tabela_de_transicoes[i][j])
+            linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
+
+    arquivo.writelines(linhas)
+    arquivo.close()
+    print(linhas)
+    return nome_arquivo
 
 
 
@@ -98,13 +125,11 @@ transicoes1[1][0] = 2
 transicoes1[1][1] = 1
 transicoes1[2][0] = 2
 transicoes1[2][1] = 1
-automta1 = AutomatoFinito("automata1.txt")
+automta1 = AutomatoFinito("./regex_afd_saida/afd_er1.txt")
 transicoes2[0][0] = 1
 transicoes2[0][1] = 0
 transicoes2[1][0] = 0
 transicoes2[1][1] = 1
-automta2 = AutomatoFinito("automata2.txt")
+automta2 = AutomatoFinito("./regex_afd_saida/afd_er2.txt")
 
-unizado = uniao(automta1, automta2)
-
-print(unizado.get_tabela_de_transicoes())
+uniao(automta1, automta2)
