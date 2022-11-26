@@ -21,7 +21,7 @@ def uniao(automato1, automato2):
     #n_estados = len(estados)
     n_estados = automato1.get_n_estados() + automato2.get_n_estados() + 1
     #contruindo o alfabeto do novo automato
-    alfabeto.append("epsilon")
+    alfabeto.append("&")
     for l in automato1.get_alfabeto():
         if not(l in alfabeto):
             alfabeto.append(l)
@@ -76,7 +76,7 @@ def uniao(automato1, automato2):
     return escrever_afd("uniao_"+automato1.nome+"_"+automato2.nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_de_transicao)
 
 def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
-    nome_arquivo = f"./regex_afd_saida/afd_"+ nome +".txt"
+    nome_arquivo = f"./uniao_afd/afd_"+ nome +".txt"
     arquivo = open(nome_arquivo, "w")
     linhas = [nome]
 
