@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from gramatica_livre_de_contexto import GLC
+from gramatica import Gramatica
 
 '''
 E' -> E 
@@ -8,14 +8,30 @@ T -> T * F | F
 F -> (E) | id
 '''
 
-
+'''
 def eh_glc(gramatica):
-    pass
+    nao_terminais = gramatica.keys()
+    contador = 0
+    for nao_terminal in nao_terminais:
+        for simbolo in nao_terminal:
+            if simbolo in nao_terminais or simbolo.islower():
+                contador += 1
+            
+            if contador >= 2:
+                return False
+
+        contador = 0
+    
+    return True
+'''
+
 
 def criar_glc(gramatica):
-    if eh_glc(gramatica):
-        return GLC(gramatica)
+    objeto = Gramatica(gramatica)
+    if objeto.eh_glc():
+        return objeto
     else:
+        del objeto
         return ValueError
 
 def ler_arquivo(nome_arquivo):
@@ -33,7 +49,6 @@ def ler_arquivo(nome_arquivo):
     except:
         ValueError('Não há arquivo com esse nome!')
 
-    print(dict)
     return dict
 
 def analisador_sintatico(nome_arquivo):
@@ -45,6 +60,6 @@ def analisador_sintatico(nome_arquivo):
 
 
 if __name__ == "__main__":
-    analisador_sintatico("./glc_entrada/glc1.txt")
+    analisador_sintatico("./glc_entrada/glc2.txt")
     
     

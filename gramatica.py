@@ -1,4 +1,4 @@
-class GLC:
+class Gramatica:
     def __init__(self, gramatica):
         gramatica = gramatica
         '''
@@ -9,6 +9,19 @@ class GLC:
          'F': ['(E)', 'id']
         }
         '''
+
+        terminais = []
+        nao_terminais = []
+        
+    
+    def determinar_nao_terminais(Self):
+        pass
+
+    def determinar_terminais(self):
+        pass
+
+    def eh_glc(self):
+        pass
 
     def calcular_first_pos(self):
         pass
