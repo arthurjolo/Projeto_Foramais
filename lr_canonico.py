@@ -10,23 +10,8 @@ T -> T * F | F
 F -> (E) | id
 '''
 
-'''
-def eh_glc(gramatica):
-    nao_terminais = gramatica.keys()
-    contador = 0
-    for nao_terminal in nao_terminais:
-        for simbolo in nao_terminal:
-            if simbolo in nao_terminais or simbolo.islower():
-                contador += 1
-            
-            if contador >= 2:
-                return False
-
-        contador = 0
-    
-    return True
-'''
-
+def algoritmo_lr_canonico(gramatica):
+    pass
 
 def criar_glc(gramatica):
     objeto = Gramatica(gramatica)
@@ -57,15 +42,16 @@ def ler_arquivo(nome_arquivo):
 
     return dict
 
-def analisador_sintatico(nome_arquivo):
+def lr_canonico(nome_arquivo):
     dicionario_glc = ler_arquivo(nome_arquivo)
     try:
         glc = criar_glc(dicionario_glc)
+        algoritmo_lr_canonico(glc)
     except ValueError as e:
         print(e)
 
 
 if __name__ == "__main__":
-    analisador_sintatico("./glc_entrada/valida/lc/glc1.txt")
+    lr_canonico("./glc_entrada/valida/lc/glc1.txt")
     
     
