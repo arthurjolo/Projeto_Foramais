@@ -31,15 +31,13 @@ def ler_arquivo(nome_arquivo):
                 nao_terminal, producoes = linha.split('->')
                 producoes = producoes.rstrip('\n').strip(' ')
                 lista_producoes = producoes.split('|')
-                for j in range(len(lista_producoes)):
+                for i in range(len(lista_producoes)):
                     lista_producoes[j] = tira_espacos(lista_producoes[j])
                     lista_producoes[j] = lista_producoes[j]
-                nao_terminal = nao_terminal.strip(' ')
-                dict[nao_terminal] = lista_producoes
+                dict[nao_terminal.strip(' ')] = lista_producoes
+        return dict
     except:
         ValueError('Não há arquivo com esse nome!')
-
-    return dict
 
 def analisador_sintatico(nome_arquivo):
     dicionario_glc = ler_arquivo(nome_arquivo)

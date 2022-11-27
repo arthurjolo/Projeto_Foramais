@@ -2,6 +2,8 @@ from enum import auto
 import math
 from automato_finito import AutomatoFinito
 
+from determinizar import determinizar 
+
 def uniao(automato1_txt, automato2_txt):
     estado_inicial = 0
     estados = [0]
@@ -13,15 +15,6 @@ def uniao(automato1_txt, automato2_txt):
     automato2 = AutomatoFinito(automato2_txt)
 
     #construindo os estados do novo automato
-    #for e in automato1.get_estados():
-    #    estados.append(e+1)
-    
-    #for e in automato2.get_estados():
-    #    estados.append(e + automato1.get_n_estados() + 1)
-
-    #print("estados unizado: ", estados)
-
-    #n_estados = len(estados)
     n_estados = automato1.get_n_estados() + automato2.get_n_estados() + 1
     #contruindo o alfabeto do novo automato
     alfabeto.append("&")
@@ -50,9 +43,7 @@ def uniao(automato1_txt, automato2_txt):
     
     #transição do estado inicial(0) por epsilon(posição 0 do alfabeto) = estados iniciais de a1 e a2
     tabela_de_transicao[0][0] = [1, automato1.get_n_estados() + 1]
-    print(n_estados)
     for i in range(1, n_estados):
-        print(i)
         if (i <= automato1.get_n_estados()):
             automato = automato1
             estado = i - 1
@@ -71,8 +62,8 @@ def uniao(automato1_txt, automato2_txt):
             else:
                 tabela_de_transicao[i][j] =math.inf
     
-    determinizar(estado_inicial, alfabeto, tabela_de_transicao, estados_finais)
-    return escrever_afd("uniao_"+automato1.nome+"_"+automato2.nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_de_transicao)
+    escrever_afd("uniao_"+automato1.nome+"_"+automato2.nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_de_transicao)
+    return determinizar("uniao_"+automato1.nome+"_"+automato2.nome, n_estados ,estado_inicial, alfabeto, tabela_de_transicao, estados_finais)
 
 def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
     nome_arquivo = f"./uniao_afd/afd_"+ nome +".txt"

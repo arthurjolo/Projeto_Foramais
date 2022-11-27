@@ -13,6 +13,7 @@ class Gramatica:
         '''
         self.nao_terminais = self.determinar_nao_terminais()
         self.terminais = self.determinar_terminais()
+        self.first_posts = {}
 
     def determinar_terminais(self):
         terminais = []
@@ -60,7 +61,29 @@ class Gramatica:
         return True
 
     def calcular_first_pos(self):
-        pass
+        dict = {}
+        for nt in self.nao_terminais:
+            self.first_posts[nt] = []
+        for nt in self.nao_terminais:
+            if self.first_posts[nt] == []:
+                self.first_pos_simbolo(nt)
+       
+
+    def first_pos_simbolo(self, symbol):
+        firsts = []
+        for prod in self.gramatica[symbol]:
+            for prod_symbol in prod:
+                if (prod_symbol in self.terminais) or (prod_symbol == '&'):
+                    firsts.append(prod_symbol)
+                    break
+                elif prod_symbol != symbol :
+                    first_symbol_posts = self.first_pos_simbolo(prod_symbol)
+                    for s in first_symbol_posts:
+                        firsts.append(s)
+                    if not('&' in first_symbol_posts):
+                        break
+        self.first_posts[symbol] = firsts
+        return firsts
 
     def calcular_last_pos(self):
         pass
