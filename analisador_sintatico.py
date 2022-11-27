@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from gramatica import Gramatica
 
+from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
+
 '''
 E' -> E 
 E -> E + T | T
@@ -28,11 +30,15 @@ def eh_glc(gramatica):
 
 def criar_glc(gramatica):
     objeto = Gramatica(gramatica)
-    if objeto.eh_glc():
-        return objeto
+    if objeto.eh_valido():
+        if objeto.eh_glc():
+            return objeto
+        else:
+            del objeto
+            raise ValueError('A gramática não é livre de contexto!')
     else:
         del objeto
-        return ValueError
+        raise ValueError('A entrada não é válida!')
 
 def ler_arquivo(nome_arquivo):
     dict = {}
@@ -54,12 +60,12 @@ def ler_arquivo(nome_arquivo):
 def analisador_sintatico(nome_arquivo):
     dicionario_glc = ler_arquivo(nome_arquivo)
     try:
-        criar_glc(dicionario_glc)
-    except:
-        print("Não é uma gramática livre de contexto!")
+        glc = criar_glc(dicionario_glc)
+    except ValueError as e:
+        print(e)
 
 
 if __name__ == "__main__":
-    analisador_sintatico("./glc_entrada/glc2.txt")
+    analisador_sintatico("./glc_entrada/valida/lc/glc1.txt")
     
     

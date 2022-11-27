@@ -1,6 +1,7 @@
 import copy
 
 from utils import remove_repetidos, retornar_todos_entre, colocar_operacao_entre_elementos
+from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
 
 '''
 Deve aceitar
@@ -15,13 +16,6 @@ id: letter(letter | digit)*
 2.
 er: a?(a | b)+
 '''
-
-alfabeto_minusculo = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l' ,'m', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-alfabeto_maiusculo = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L' ,'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-numeros = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-operadores = ['*', '+', '?', '|', '(', ')', '.']
-empty = '&'
 
 contador_last_pos = 0
 contador_first_pos = 0
