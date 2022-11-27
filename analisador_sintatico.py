@@ -31,7 +31,7 @@ def ler_arquivo(nome_arquivo):
                 nao_terminal, producoes = linha.split('->')
                 producoes = producoes.rstrip('\n').strip(' ')
                 lista_producoes = producoes.split('|')
-                for i in range(len(lista_producoes)):
+                for j in range(len(lista_producoes)):
                     lista_producoes[j] = tira_espacos(lista_producoes[j])
                     lista_producoes[j] = lista_producoes[j]
                 dict[nao_terminal.strip(' ')] = lista_producoes
