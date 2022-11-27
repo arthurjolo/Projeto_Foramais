@@ -35,10 +35,9 @@ def ler_arquivo(nome_arquivo):
                 for i in range(len(lista_producoes)):
                     lista_producoes[i] = lista_producoes[i].strip(' ')
                 dict[nao_terminal.strip(' ')] = lista_producoes
+        return dict
     except:
         ValueError('Não há arquivo com esse nome!')
-
-    return dict
 
 def analisador_sintatico(nome_arquivo):
     dicionario_glc = ler_arquivo(nome_arquivo)
