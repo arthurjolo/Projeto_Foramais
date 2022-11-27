@@ -1,4 +1,4 @@
-E' -> E 
-E -> E + T | T
+S -> E 
+ETTa -> E + T | T
 T -> T * F | F
 F -> (E) | id

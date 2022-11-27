@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from gramatica import Gramatica
 
+from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
+
 '''
 E' -> E 
 E -> E + T | T
@@ -8,31 +10,20 @@ T -> T * F | F
 F -> (E) | id
 '''
 
-'''
-def eh_glc(gramatica):
-    nao_terminais = gramatica.keys()
-    contador = 0
-    for nao_terminal in nao_terminais:
-        for simbolo in nao_terminal:
-            if simbolo in nao_terminais or simbolo.islower():
-                contador += 1
-            
-            if contador >= 2:
-                return False
-
-        contador = 0
-    
-    return True
-'''
-
+def algoritmo_lr_canonico(gramatica):
+    pass
 
 def criar_glc(gramatica):
     objeto = Gramatica(gramatica)
-    if objeto.eh_glc():
-        return objeto
+    if objeto.eh_valido():
+        if objeto.eh_glc():
+            return objeto
+        else:
+            del objeto
+            raise ValueError('A gramática não é livre de contexto!')
     else:
         del objeto
-        return ValueError
+        raise ValueError('A entrada não é válida!')
 
 def ler_arquivo(nome_arquivo):
     dict = {}
@@ -51,15 +42,16 @@ def ler_arquivo(nome_arquivo):
 
     return dict
 
-def analisador_sintatico(nome_arquivo):
+def lr_canonico(nome_arquivo):
     dicionario_glc = ler_arquivo(nome_arquivo)
     try:
-        criar_glc(dicionario_glc)
-    except:
-        print("Não é uma gramática livre de contexto!")
+        glc = criar_glc(dicionario_glc)
+        algoritmo_lr_canonico(glc)
+    except ValueError as e:
+        print(e)
 
 
 if __name__ == "__main__":
-    analisador_sintatico("./glc_entrada/glc2.txt")
+    lr_canonico("./glc_entrada/valida/lc/glc1.txt")
     
     
