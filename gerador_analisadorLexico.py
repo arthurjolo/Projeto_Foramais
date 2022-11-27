@@ -18,23 +18,28 @@ class Gerador_AnalizadoLexico:
                 break
 
             if acao == 1:
-                arquivo_er = input("insira o nome do arquivo contendo a ER")
-                self.add_er(arquivo_er)
+                
+                self.add_er()
             
             elif acao == 2:
                 codigo_fonte = input("insira o nome do arquivo contendo o código fonte")
                 #chamar parte da Larissa
             
-    def add_er(self, arquivo_er):
-        self.expressoes_regulares.append(arquivo_er)
-        af_gerada = regex_para_afd(arquivo_er)
-        af_nova = AutomatoFinito(af_gerada)
-        self.automatos.append(af_nova)
-        if not(self.analizador_autal):
-            self.analizador_autal = af_nova
-            self.analizador_autal.set_nome("analizador_lexico")
-        else:
-            analizador_novo = uniao(self.analizador_autal, af_nova) #precisa determinizar, quando o edu fizer o dele
-            self.analizador_autal = AutomatoFinito(analizador_novo)
-            self.analizador_autal.set_nome("analizador_lexico")
+    def add_er(self):
+        arquivo_er = input("insira o nome do arquivo contendo a ER")
+        while True:
+            self.expressoes_regulares.append(arquivo_er)
+            af_gerada = regex_para_afd(arquivo_er)
+            af_nova = AutomatoFinito(af_gerada)
+            self.automatos.append(af_nova)
+            if not(self.analizador_autal):
+                self.analizador_autal = af_nova
+                self.analizador_autal.set_nome("analizador_lexico")
+            else:
+                analizador_novo = uniao(self.analizador_autal, af_nova) #precisa determinizar, quando o edu fizer o dele
+                self.analizador_autal = AutomatoFinito(analizador_novo)
+                self.analizador_autal.set_nome("analizador_lexico")
+            continuar = input("deseja inserir outra ER? ('S' 'N')")
+            if continuar.upper() == 'N':
+                break
 
