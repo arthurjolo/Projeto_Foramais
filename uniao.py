@@ -2,12 +2,15 @@ from enum import auto
 import math
 from automato_finito import AutomatoFinito
 
-def uniao(automato1, automato2):
+def uniao(automato1_txt, automato2_txt):
     estado_inicial = 0
     estados = [0]
     alfabeto = []
     tabela_de_transicao = []
     estados_finais = []
+
+    automato1 = AutomatoFinito(automato1_txt)
+    automato2 = AutomatoFinito(automato2_txt)
 
     #construindo os estados do novo automato
     #for e in automato1.get_estados():
@@ -51,28 +54,24 @@ def uniao(automato1, automato2):
     for i in range(1, n_estados):
         print(i)
         if (i <= automato1.get_n_estados()):
-            print("\nautomato 1")
             automato = automato1
             estado = i - 1
             ajuste = 1
-            print("estado : ",estado)
         else:
             automato = automato2
             estado = i - 1 - automato1.get_n_estados()
             ajuste = 1 + automato1.get_n_estados()
-            print("\nautomato 2")
-            print("estado : ",estado)
         alfabeto_automato = automato.get_alfabeto()
         
         automato_trasicoes = automato.get_tabela_de_transicoes()
         for j in range(len(alfabeto)):
             if alfabeto[j] in alfabeto_automato:
                 indice = alfabeto_automato.index(alfabeto[j])
-                print("indice: ", indice)
                 tabela_de_transicao[i][j] = automato_trasicoes[estado][indice] + ajuste
             else:
                 tabela_de_transicao[i][j] =math.inf
     
+    determinizar(estado_inicial, alfabeto, tabela_de_transicao, estados_finais)
     return escrever_afd("uniao_"+automato1.nome+"_"+automato2.nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_de_transicao)
 
 def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
@@ -106,16 +105,4 @@ def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabe
 
 
 
-transicoes1 = []
-transicoes2 = []
-alfabeto = ['a','b']
-for i in range(3):
-        linha = []
-        for j in range(len(alfabeto)):
-            linha.append(math.inf)
-        transicoes1.append(linha)
-for i in range(2):
-        linha = []
-        for j in range(len(alfabeto)):
-            linha.append(math.inf)
-        transicoes2.append(linha)
+uniao("./regex_afd_saida/afd_er1.txt", "./regex_afd_saida/afd_er2.txt")
