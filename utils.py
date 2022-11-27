@@ -4,6 +4,13 @@ numeros = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 operadores = ['*', '+', '?', '|', '(', ')', '.']
 empty = '&'
 
+def tira_espacos(lista):
+    resultado = []
+    for i in range(len(lista)):
+        if lista[i] != ' ':
+            resultado.append(lista[i])
+    return ''.join(resultado)
+
 def remove_repetidos(lista):
     l = []
     for i in lista:

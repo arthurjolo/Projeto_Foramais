@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from gramatica import Gramatica
 from lr_canonico import lr_canonico
-
-from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
+from utils import tira_espacos
 
 '''
 E' -> E 
@@ -28,13 +27,15 @@ def ler_arquivo(nome_arquivo):
     try:
         with open(nome_arquivo) as f:
             linhas = f.readlines()
-            for linha in linhas:
+            for i, linha in enumerate(linhas):
                 nao_terminal, producoes = linha.split('->')
                 producoes = producoes.rstrip('\n').strip(' ')
                 lista_producoes = producoes.split('|')
-                for i in range(len(lista_producoes)):
-                    lista_producoes[i] = lista_producoes[i].strip(' ')
-                dict[nao_terminal.strip(' ')] = lista_producoes
+                for j in range(len(lista_producoes)):
+                    lista_producoes[j] = tira_espacos(lista_producoes[j])
+                    lista_producoes[j] = lista_producoes[j]
+                nao_terminal = nao_terminal.strip(' ')
+                dict[nao_terminal] = lista_producoes
     except:
         ValueError('Não há arquivo com esse nome!')
 
