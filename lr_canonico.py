@@ -41,7 +41,7 @@ def get_itens(glc, X):
     primeiro_item = get_primeiro_fechamento(glc)
     J = get_fechamento(primeiro_item, glc)
 
-    C = [J]
+    R = [J]
     pilha = copy(R)
 
     while pilha != []:

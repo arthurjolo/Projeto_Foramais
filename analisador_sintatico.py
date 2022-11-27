@@ -27,13 +27,13 @@ def ler_arquivo(nome_arquivo):
     try:
         with open(nome_arquivo) as f:
             linhas = f.readlines()
-            for i, linha in enumerate(linhas):
+            for linha in linhas:
                 nao_terminal, producoes = linha.split('->')
                 producoes = producoes.rstrip('\n').strip(' ')
                 lista_producoes = producoes.split('|')
-                for j in range(len(lista_producoes)):
-                    lista_producoes[j] = tira_espacos(lista_producoes[j])
-                    lista_producoes[j] = lista_producoes[j]
+                for i in range(len(lista_producoes)):
+                    lista_producoes[i] = tira_espacos(lista_producoes[i])
+                    lista_producoes[i] = lista_producoes[i]
                 dict[nao_terminal.strip(' ')] = lista_producoes
         return dict
     except:
