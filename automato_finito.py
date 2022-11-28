@@ -1,6 +1,6 @@
 from contextlib import nullcontext
 import math
-
+from model_analisador_lexico import RespostaPasso
 
 class AutomatoFinito:
     def __init__(self, arquivo : str):
@@ -73,4 +73,42 @@ class AutomatoFinito:
                 if not linha:
                     break
                 linha = linha.split(',')
+                print(linha)
                 self.tabela_transicoes[int(linha[0])][self.alfabeto.index(linha[1])] = int(linha[2])
+
+
+    def passo_de_processamento(self, estado, passo, palavra):
+        
+        resposta = RespostaPasso()
+       
+        if (estado < self.n_estados):
+            estado_atual = estado
+            if (len(palavra) == passo):
+                if (estado_atual in self.estados_finais):
+                    resposta.is_palavra_aceita = True
+                    resposta.estado_final = estado_atual
+            else:
+                letra_atual = palavra[passo]
+                if letra_atual not in self.alfabeto:
+                    resposta.erro = "nao esta no alfabeto"
+                else:
+                    try:
+                        proximos_estados = [self.tabela_transicoes[estado_atual][self.alfabeto.index(letra_atual)]]
+                    except Exception as e:
+                        proximos_estados = None
+
+                    proximos_estados_processar = []
+                
+                    if (proximos_estados == None):
+                        resposta.estado_final = estado_atual
+                    else:
+                        for proximo_estado in proximos_estados:
+                            proximos_estados_processar.append(proximo_estado)
+                        
+                        resposta.is_palavra_processada = True
+                        resposta.proximos_estados = proximos_estados_processar 
+        else:
+            resposta.erro = "estado inválido"
+     
+        return resposta
+

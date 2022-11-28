@@ -458,9 +458,11 @@ def escrever_resultados(dict_adf):
 
         linhas.append('\n'+str(automato.n_estados))
         linhas.append('\n'+str(automato.estado_inicial))
-
+        estados_finais = ""
         for estado in automato.estados_finais:
-            linhas.append('\n'+str(estado))
+            estados_finais = estados_finais + "," + str(estado)
+
+        linhas.append('\n'+str(estados_finais[1::]))
 
         alfabeto = automato.alfabeto
 

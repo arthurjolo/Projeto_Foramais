@@ -12,6 +12,7 @@ def uniao(automato1_txt, automato2_txt):
     estados_finais = []
 
     automato1 = AutomatoFinito(automato1_txt)
+    print(automato2_txt)
     automato2 = AutomatoFinito(automato2_txt)
 
     #construindo os estados do novo automato
@@ -96,4 +97,4 @@ def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabe
 
 
 
-uniao("./regex_afd_saida/afd_er1.txt", "./regex_afd_saida/afd_er2.txt")
+#uniao("./regex_afd_saida/afd_er1.txt", "./regex_afd_saida/afd_er2.txt")
