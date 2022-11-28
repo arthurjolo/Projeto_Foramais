@@ -1,4 +1,5 @@
 from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
+from utils import tira_espacos
 
 class Gramatica:
     def __init__(self, gramatica):
@@ -22,10 +23,10 @@ class Gramatica:
                 for caractere in producao:
                     if not caractere.isupper() and caractere != empty:
                         terminais.append(caractere)
-        return set(filter(lambda x: x != ' ', terminais))
+        return list(filter(lambda x: x != ' ', terminais))
 
     def determinar_nao_terminais(self):
-        return self.gramatica.keys()
+        return list(self.gramatica.keys())
 
     def eh_valido(self):
         # Checar se a chave e o valor não são vazios

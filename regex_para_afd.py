@@ -59,7 +59,7 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
                 states.append(U)
 
             if len(folhas) in U:
-                if len(Dstates) not in final_states:
+                if len(Dstates)-1 not in final_states:
                     final_states.append(len(Dstates)-1)
          
             for i in range(len(Dstates)):
@@ -487,5 +487,5 @@ def regex_para_afd(nome_do_arquivo):
     return escrever_resultados(dict_afd)
 
 if __name__ == "__main__":
-    print(regex_para_afd("./regex_entrada/regex3.txt"))
+    print(regex_para_afd("./regex_entrada/regex1.txt"))
     
