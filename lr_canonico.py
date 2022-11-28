@@ -42,21 +42,18 @@ def achar_transicao(automato_lr, X):
             anterior = caractere
     return novo_I
 
-def ha_transicao(C, I, X):
+def checar_transicao(C, transicao, X):
     for item in C:
-        automato_lr = item[0]
-        print(automato_lr.item)
-        print(I.item)
-        if automato_lr.item == I.item:
-            print(X)
-            print(list(I.transicao.keys()))
-            if X in list(I.transicao.keys()):
-                print('alcancou')
-                return True
-    return False    
+        automato_lr = item[2]
+        if item[2] == None:
+            continue
+        if automato_lr.transicao.get(X):
+            if automato_lr.transicao[X].item == transicao:
+                return True, automato_lr.transicao[X]
+    return False, None
 
 def get_fechamento(C, glc):
-    J = C
+    J = copy(C)
     pilha = copy(J)
 
     while pilha != []:
@@ -94,29 +91,29 @@ def get_itens(glc, simbolos):
     primeiro_item = get_primeiro_fechamento(glc)
     J = get_fechamento(primeiro_item, glc)
 
-    INICIO_DE_ENTRADA = '%'
-    C = [(AutomatoLR(primeiro_item, J), '%')]
+    C = [('', '', AutomatoLR(primeiro_item, J))]
     pilha = copy(C)
     
     adicionou = 0
-    while adicionou <= 2:
+    while pilha != []:
         adicionou += 1
         item_pilha = pilha.pop()
-        automato_lr = item_pilha[0]
-        I = automato_lr.item
+        automato_lr = item_pilha[2]
         for X in simbolos:
             transicao = achar_transicao(automato_lr, X)
             if transicao:
-                novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc))
-                if not ha_transicao(C, automato_lr, X):
-                    C.append((novo_automato_lr, X))
-                    pilha.append((novo_automato_lr, X))
+                ha_transicao, objeto = checar_transicao(C, transicao, X)
+                if not ha_transicao:
+                    novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc))
+                    pilha.append((automato_lr.item, X, novo_automato_lr))
                     adicionou = 0
-                automato_lr.transicao[X] = novo_automato_lr
+                else:
+                    novo_automato_lr = objeto
 
-        print('aqui1')
-    
-    print('aqui2')
+                C.append((automato_lr.item, X, novo_automato_lr))
+                automato_lr.transicao[X] = novo_automato_lr
+        
+    return C
 
 def gerar_gramatica_estendida(glc):
     for cabeca in glc.gramatica.keys():
