@@ -4,7 +4,6 @@ from lr_canonico import lr_canonico
 from utils import tira_espacos
 
 '''
-E' -> E 
 E -> E + T | T
 T -> T * F | F
 F -> (E) | id
