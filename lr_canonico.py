@@ -91,7 +91,9 @@ def get_itens(glc, simbolos):
     primeiro_item = get_primeiro_fechamento(glc)
     J = get_fechamento(primeiro_item, glc)
 
-    C = [('', '', AutomatoLR(primeiro_item, J))]
+    primeiro_automato = AutomatoLR(primeiro_item, J)
+    C = [('', '', primeiro_automato)]
+    I = [primeiro_automato]
     pilha = copy(C)
     
     adicionou = 0
@@ -105,6 +107,7 @@ def get_itens(glc, simbolos):
                 ha_transicao, objeto = checar_transicao(C, transicao, X)
                 if not ha_transicao:
                     novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc))
+                    I.append(novo_automato_lr)
                     pilha.append((automato_lr.item, X, novo_automato_lr))
                     adicionou = 0
                 else:
@@ -113,7 +116,7 @@ def get_itens(glc, simbolos):
                 C.append((automato_lr.item, X, novo_automato_lr))
                 automato_lr.transicao[X] = novo_automato_lr
         
-    return C
+    return C, I
 
 def gerar_gramatica_estendida(glc):
     for cabeca in glc.gramatica.keys():
@@ -128,7 +131,9 @@ def gerar_gramatica_estendida(glc):
 def construir_tabela_slr(glc):
     gramatica_estendida = gerar_gramatica_estendida(glc)
     simbolos = glc.nao_terminais+glc.terminais
-    C = get_itens(gramatica_estendida, simbolos)
+    C, I = get_itens(gramatica_estendida, simbolos)
+
+    print('aqui')
 
 def lr_canonico(glc):                      
     construir_tabela_slr(glc)
