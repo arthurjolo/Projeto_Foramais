@@ -43,15 +43,20 @@ def achar_transicao(automato_lr, X):
     return novo_I
 
 def ha_transicao(C, I, X):
-    for automato_lr in C:
-        for i, x in automato_lr.transicao.items():
-            if i == I and x == X:
+    for item in C:
+        automato_lr = item[0]
+        print(automato_lr.item)
+        print(I.item)
+        if automato_lr.item == I.item:
+            print(X)
+            print(list(I.transicao.keys()))
+            if X in list(I.transicao.keys()):
+                print('alcancou')
                 return True
-    
     return False    
 
 def get_fechamento(C, glc):
-    J = [C]
+    J = C
     pilha = copy(J)
 
     while pilha != []:
@@ -83,26 +88,35 @@ def get_primeiro_fechamento(glc):
     for chave, itens in glc.items():
         primeiro_item[chave] = f"#{itens[0]}"
         break
-    return primeiro_item
+    return [primeiro_item]
 
 def get_itens(glc, simbolos):
     primeiro_item = get_primeiro_fechamento(glc)
     J = get_fechamento(primeiro_item, glc)
 
-    C = [AutomatoLR([primeiro_item], J)]
+    INICIO_DE_ENTRADA = '%'
+    C = [(AutomatoLR(primeiro_item, J), '%')]
     pilha = copy(C)
-
-    while pilha != []:
-        automato_lr = pilha.pop()
+    
+    adicionou = 0
+    while adicionou <= 2:
+        adicionou += 1
+        item_pilha = pilha.pop()
+        automato_lr = item_pilha[0]
         I = automato_lr.item
         for X in simbolos:
             transicao = achar_transicao(automato_lr, X)
             if transicao:
-                novo_automato_lr = 'bla'
-                automato_lr.transicao['X'] = novo_automato_lr
-                if not ha_transicao(C, I, X):
-                    C.append(AutomatoLR())
-                
+                novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc))
+                if not ha_transicao(C, automato_lr, X):
+                    C.append((novo_automato_lr, X))
+                    pilha.append((novo_automato_lr, X))
+                    adicionou = 0
+                automato_lr.transicao[X] = novo_automato_lr
+
+        print('aqui1')
+    
+    print('aqui2')
 
 def gerar_gramatica_estendida(glc):
     for cabeca in glc.gramatica.keys():
