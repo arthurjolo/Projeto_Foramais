@@ -53,14 +53,6 @@ def analisador_sintatico(nome_arquivo):
         print(e)
 
 
-#if __name__ == "__main__":
-#   analisador_sintatico("./glc_entrada/valida/lc/glc1.txt")
+if __name__ == "__main__":
+   analisador_sintatico("./glc_entrada/valida/lc/glc1.txt")
     
-retorno = ler_arquivo("./glc_entrada/valida/lc/glc2.txt")
-glc = criar_glc(retorno[0],retorno[1])
-glc.calcular_first_pos()
-print(glc.first_posts["B"][2] + glc.first_posts["B"][4])
-glc.calcular_follow_pos()
-print(glc.first_posts)
-print(glc.follow_posts)    
-print(glc.simbolo_inicial)
