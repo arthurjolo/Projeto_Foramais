@@ -1,9 +1,11 @@
 from copy import copy
+from utils import tira_caractere
 
 class AutomatoLR:
-    def __init__(self, item, fechamento):
+    def __init__(self, item, fechamento, indice):
         self.item = item
         self.fechamento = fechamento
+        self.indice = indice
         self.transicao = {}
         '''
         Exemplo: Se I representa o conjunto com dois itens
@@ -91,8 +93,10 @@ def get_itens(glc, simbolos):
     primeiro_item = get_primeiro_fechamento(glc)
     J = get_fechamento(primeiro_item, glc)
 
-    primeiro_automato = AutomatoLR(primeiro_item, J)
-    C = [('', '', primeiro_automato)]
+    indice = 0
+    primeiro_automato = AutomatoLR(primeiro_item, J, indice)
+
+    C = [(None, '', primeiro_automato)]
     I = [primeiro_automato]
     pilha = copy(C)
     
@@ -106,14 +110,15 @@ def get_itens(glc, simbolos):
             if transicao:
                 ha_transicao, objeto = checar_transicao(C, transicao, X)
                 if not ha_transicao:
-                    novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc))
+                    indice += 1
+                    novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc), indice)
                     I.append(novo_automato_lr)
-                    pilha.append((automato_lr.item, X, novo_automato_lr))
+                    pilha.append((automato_lr, X, novo_automato_lr))
                     adicionou = 0
                 else:
                     novo_automato_lr = objeto
 
-                C.append((automato_lr.item, X, novo_automato_lr))
+                C.append((automato_lr, X, novo_automato_lr))
                 automato_lr.transicao[X] = novo_automato_lr
         
     return C, I
@@ -130,10 +135,67 @@ def gerar_gramatica_estendida(glc):
 
 def construir_tabela_slr(glc):
     gramatica_estendida = gerar_gramatica_estendida(glc)
-    simbolos = glc.nao_terminais+glc.terminais
+    terminais = glc.terminais
+    nao_terminais = glc.nao_terminais
+    simbolos = nao_terminais + terminais
     C, I = get_itens(gramatica_estendida, simbolos)
+    
+    ACTION = [{}] * len(I)
+    GOTO = [{}] * len(I)
 
-    print('aqui')
+    first_i = C[0][2]
+    enumerated_first_i = []
+    for producoes in first_i:
+        head = list(producoes.keys())[0]
+        body = list(producoes.values())[0]
+        dic = {}
+        dic[head] = tira_caractere(body, '#')
+        enumerated_first_i.append(dic)
 
-def lr_canonico(glc):                      
-    construir_tabela_slr(glc)
+
+    for n, i in enumerate(I):
+        for producao in i.fechamento:
+            anterior = None
+            for dic in producao:
+                head = list(dic.keys())[0]
+                body = list(dic.values())[0]
+                for m, caractere in enumerate(body):
+                    condition_1 = anterior == '#'
+                    sub_condition = caractere == '#' and m == len(producao)-1
+                    condition_2 = head != list(first_i.item.keys())[0]
+                    condition_3 = not(head != list(first_i.item.keys())[0])
+
+                    #primeira regra ACTION
+                    if condition_1:
+                        if caractere in terminais:
+                            #and GOTO(Ii, a) = Ij
+                            for c in C:
+                                if c[0].item == i.item and c[1] == caractere:
+                                    ACTION[n][caractere] = f's{c[2].indice}'
+                    elif sub_condition:
+                        #segunda regra ACTION
+                        if condition_2:
+                            follow_pos = first_i.follow_pos(head)
+                            for simbolo in follow_pos:
+                                for numero, e in enumerate(enumerated_first_i):
+                                    if e == producao:
+                                        break
+                                ACTION[n][simbolo] = numero
+                        else:
+                            #terceira regra ACTION
+                            ACTION[n]['$'] = 'accept'
+                    
+                    if condition_1 and (sub_condition and condition_2) or condition_1 and (sub_condition and condition_3) or (sub_condition and condition_2) and (sub_condition and condition_3):
+                        raise ValueError('Gramática não é SLR(1)')
+                anterior = caractere
+
+    for c in C:
+        if c[1] in nao_terminais:
+            GOTO[c[0].indice][c[1]] = f'{c[2].indice}'
+
+    return ACTION, GOTO
+
+def lr_canonico(glc):   
+    #tabela_slr = (ACTION, GOTO)                   
+    tabela_slr = construir_tabela_slr(glc)
+    

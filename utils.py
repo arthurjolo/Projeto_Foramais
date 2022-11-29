@@ -4,10 +4,10 @@ numeros = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 operadores = ['*', '+', '?', '|', '(', ')', '.']
 empty = '&'
 
-def tira_espacos(lista):
+def tira_caractere(lista, caractere):
     resultado = []
     for i in range(len(lista)):
-        if lista[i] != ' ':
+        if lista[i] != caractere:
             resultado.append(lista[i])
     return ''.join(resultado)
 
