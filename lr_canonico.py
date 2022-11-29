@@ -96,7 +96,7 @@ def get_itens(glc, simbolos):
     indice = 0
     primeiro_automato = AutomatoLR(primeiro_item, J, indice)
 
-    C = [('', '', primeiro_automato)]
+    C = [(None, '', primeiro_automato)]
     I = [primeiro_automato]
     pilha = copy(C)
     
@@ -113,12 +113,12 @@ def get_itens(glc, simbolos):
                     indice += 1
                     novo_automato_lr = AutomatoLR(transicao, get_fechamento(transicao, glc), indice)
                     I.append(novo_automato_lr)
-                    pilha.append((automato_lr.item, X, novo_automato_lr))
+                    pilha.append((automato_lr, X, novo_automato_lr))
                     adicionou = 0
                 else:
                     novo_automato_lr = objeto
 
-                C.append((automato_lr.item, X, novo_automato_lr))
+                C.append((automato_lr, X, novo_automato_lr))
                 automato_lr.transicao[X] = novo_automato_lr
         
     return C, I
@@ -170,7 +170,7 @@ def construir_tabela_slr(glc):
                         if caractere in terminais:
                             #and GOTO(Ii, a) = Ij
                             for c in C:
-                                if c[0] == i.item and c[1] == caractere:
+                                if c[0].item == i.item and c[1] == caractere:
                                     ACTION[n][caractere] = f's{c[2].indice}'
                     elif sub_condition:
                         #segunda regra ACTION
@@ -191,9 +191,7 @@ def construir_tabela_slr(glc):
 
     for c in C:
         if c[1] in nao_terminais:
-            for m, i in enumerate(I):
-                if i.item == c[0]:
-                    GOTO[n][c[1]] = f'{c[2].indice}'
+            GOTO[c[0].indice][c[1]] = f'{c[2].indice}'
 
     return ACTION, GOTO
 
