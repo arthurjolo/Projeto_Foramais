@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from gramatica import Gramatica
 from lr_canonico import lr_canonico
-from utils import tira_espacos
+from utils import tira_caractere
 
 '''
 E -> E + T | T
@@ -31,12 +31,12 @@ def ler_arquivo(nome_arquivo):
                 producoes = producoes.rstrip('\n').strip(' ')
                 lista_producoes = producoes.split('|')
                 for i in range(len(lista_producoes)):
-                    lista_producoes[i] = tira_espacos(lista_producoes[i])
+                    lista_producoes[i] = tira_caractere(lista_producoes[i], ' ')
                     lista_producoes[i] = lista_producoes[i]
                 dict[nao_terminal.strip(' ')] = lista_producoes
         return dict
     except:
-        ValueError('Não há arquivo com esse nome!')
+        raise ValueError('Não há arquivo com esse nome!')
 
 def analisador_sintatico(nome_arquivo):
     dicionario_glc = ler_arquivo(nome_arquivo)

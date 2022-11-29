@@ -1,5 +1,4 @@
 from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
-from utils import tira_espacos
 
 class Gramatica:
     def __init__(self, gramatica):
