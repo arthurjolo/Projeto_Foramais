@@ -59,8 +59,8 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
                 states.append(U)
 
             if len(folhas) in U:
-                if len(Dstates) not in final_states:
-                    final_states.append(len(Dstates))
+                if len(Dstates)-1 not in final_states:
+                    final_states.append(len(Dstates)-1)
          
             for i in range(len(Dstates)):
                 if U == Dstates[i]:
@@ -458,9 +458,11 @@ def escrever_resultados(dict_adf):
 
         linhas.append('\n'+str(automato.n_estados))
         linhas.append('\n'+str(automato.estado_inicial))
-
+        estados_finais = ""
         for estado in automato.estados_finais:
-            linhas.append('\n'+str(estado))
+            estados_finais = estados_finais + "," + str(estado)
+
+        linhas.append('\n'+str(estados_finais[1::]))
 
         alfabeto = automato.alfabeto
 

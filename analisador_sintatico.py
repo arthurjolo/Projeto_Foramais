@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 from gramatica import Gramatica
 from lr_canonico import lr_canonico
-
-from utils import alfabeto_maiusculo, alfabeto_minusculo, numeros, operadores, empty
+from utils import tira_espacos
 
 '''
-E' -> E 
 E -> E + T | T
 T -> T * F | F
 F -> (E) | id
@@ -33,7 +31,8 @@ def ler_arquivo(nome_arquivo):
                 producoes = producoes.rstrip('\n').strip(' ')
                 lista_producoes = producoes.split('|')
                 for i in range(len(lista_producoes)):
-                    lista_producoes[i] = lista_producoes[i].strip(' ')
+                    lista_producoes[i] = tira_espacos(lista_producoes[i])
+                    lista_producoes[i] = lista_producoes[i]
                 dict[nao_terminal.strip(' ')] = lista_producoes
         return dict
     except:

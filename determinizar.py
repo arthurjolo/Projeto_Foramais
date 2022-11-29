@@ -77,7 +77,7 @@ def determinizar(nome,n_estados,estado_inicial, alfabeto, tabela_de_transicao, e
 
 
 
-    escrever_afd(nome, len(lista_traducao), 0, novos_finais, alfabeto, dict_transicoes)
+    return escrever_afd(nome, len(lista_traducao), 0, novos_finais, alfabeto, dict_transicoes)
 
 
 
