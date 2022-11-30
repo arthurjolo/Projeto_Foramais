@@ -140,53 +140,62 @@ def construir_tabela_slr(glc):
     simbolos = nao_terminais + terminais
     C, I = get_itens(gramatica_estendida, simbolos)
     
-    ACTION = [{}] * len(I)
-    GOTO = [{}] * len(I)
+    ACTION = []
+    GOTO = []
+    for i in range(len(I)):
+        ACTION.append({})
+        GOTO.append({})
 
     first_i = C[0][2]
     enumerated_first_i = []
-    for producoes in first_i:
+    for producoes in first_i.fechamento:
         head = list(producoes.keys())[0]
         body = list(producoes.values())[0]
         dic = {}
         dic[head] = tira_caractere(body, '#')
         enumerated_first_i.append(dic)
 
+    glc.calcular_follow_pos()
+    follow_posts = glc.follow_posts
 
     for n, i in enumerate(I):
         for producao in i.fechamento:
             anterior = None
-            for dic in producao:
-                head = list(dic.keys())[0]
-                body = list(dic.values())[0]
-                for m, caractere in enumerate(body):
-                    condition_1 = anterior == '#'
-                    sub_condition = caractere == '#' and m == len(producao)-1
-                    condition_2 = head != list(first_i.item.keys())[0]
-                    condition_3 = not(head != list(first_i.item.keys())[0])
+            head = list(producao.keys())[0]
+            body = list(producao.values())[0]
+            for m, caractere in enumerate(body):
+                condition_1 = anterior == '#'
+                sub_condition = caractere == '#' and m == len(body)-1
+                condition_2 = head != list(first_i.item[0].keys())[0]
+                condition_3 = not(head != list(first_i.item[0].keys())[0])
 
-                    #primeira regra ACTION
-                    if condition_1:
-                        if caractere in terminais:
-                            #and GOTO(Ii, a) = Ij
-                            for c in C:
+                #primeira regra ACTION
+                if condition_1:
+                    if caractere in terminais:
+                        #and GOTO(Ii, a) = Ij
+                        for c in C:
+                            if c[0] != None:
                                 if c[0].item == i.item and c[1] == caractere:
                                     ACTION[n][caractere] = f's{c[2].indice}'
-                    elif sub_condition:
-                        #segunda regra ACTION
-                        if condition_2:
-                            follow_pos = first_i.follow_pos(head)
-                            for simbolo in follow_pos:
-                                for numero, e in enumerate(enumerated_first_i):
-                                    if e == producao:
-                                        break
-                                ACTION[n][simbolo] = numero
-                        else:
-                            #terceira regra ACTION
-                            ACTION[n]['$'] = 'accept'
-                    
-                    if condition_1 and (sub_condition and condition_2) or condition_1 and (sub_condition and condition_3) or (sub_condition and condition_2) and (sub_condition and condition_3):
-                        raise ValueError('Gramática não é SLR(1)')
+                elif sub_condition:
+                    #segunda regra ACTION
+                    if condition_2:
+                        follow_pos = follow_posts[head]
+                        producao_comparativa = copy(producao)
+                        for indice, valor in producao_comparativa.items():
+                            producao_comparativa[indice] = tira_caractere(valor, '#')
+                        for simbolo in follow_pos:
+                            for numero, e in enumerate(enumerated_first_i):
+                                if e == producao_comparativa:
+                                    break
+                            ACTION[n][simbolo] = f'r{numero}'
+                    else:
+                        #terceira regra ACTION
+                        ACTION[n]['$'] = 'accept'
+                
+                if condition_1 and (sub_condition and condition_2) or condition_1 and (sub_condition and condition_3) or (sub_condition and condition_2) and (sub_condition and condition_3):
+                    raise ValueError('Gramática não é SLR(1)')
+                
                 anterior = caractere
 
     for c in C:
@@ -198,4 +207,5 @@ def construir_tabela_slr(glc):
 def lr_canonico(glc):   
     #tabela_slr = (ACTION, GOTO)                   
     tabela_slr = construir_tabela_slr(glc)
+    print('aqui')
     

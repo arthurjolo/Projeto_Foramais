@@ -89,7 +89,6 @@ class Gramatica:
             self.follow_posts[nt] = []
         for nt in self.nao_terminais:
             if self.follow_posts[nt] == []:
-                print(nt)
                 if nt == self.simbolo_inicial:
                     self.follow_posts[nt].append("$")
                 lista_reg_3 = lista_reg_3 + self.follow_pos_steps_1_2(nt)
