@@ -159,27 +159,28 @@ def construir_tabela_slr(glc):
     follow_posts = glc.follow_posts
 
     for n, i in enumerate(I):
+        entrou_condicao_1 = False
+        entrou_condicao_2 = False
+        entrou_condicao_3 = False
+
         for producao in i.fechamento:
             anterior = None
             head = list(producao.keys())[0]
             body = list(producao.values())[0]
-            for m, caractere in enumerate(body):
-                condition_1 = anterior == '#'
-                sub_condition = caractere == '#' and m == len(body)-1
-                condition_2 = head != list(first_i.item[0].keys())[0]
-                condition_3 = not(head != list(first_i.item[0].keys())[0])
 
+            for m, caractere in enumerate(body):
                 #primeira regra ACTION
-                if condition_1:
+                if anterior == '#':
                     if caractere in terminais:
                         #and GOTO(Ii, a) = Ij
                         for c in C:
                             if c[0] != None:
                                 if c[0].item == i.item and c[1] == caractere:
                                     ACTION[n][caractere] = f's{c[2].indice}'
-                elif sub_condition:
+                                    entrou_condicao_1 = True
+                elif caractere == '#' and m == len(body)-1:
                     #segunda regra ACTION
-                    if condition_2:
+                    if head != list(first_i.item[0].keys())[0]:
                         follow_pos = follow_posts[head]
                         producao_comparativa = copy(producao)
                         for indice, valor in producao_comparativa.items():
@@ -189,14 +190,16 @@ def construir_tabela_slr(glc):
                                 if e == producao_comparativa:
                                     break
                             ACTION[n][simbolo] = f'r{numero}'
+                            entrou_condicao_2 = True
                     else:
                         #terceira regra ACTION
                         ACTION[n]['$'] = 'accept'
-                
-                if condition_1 and (sub_condition and condition_2) or condition_1 and (sub_condition and condition_3) or (sub_condition and condition_2) and (sub_condition and condition_3):
-                    raise ValueError('Gramática não é SLR(1)')
+                        entrou_condicao_3 = True
                 
                 anterior = caractere
+            
+        if not(entrou_condicao_1) and not(entrou_condicao_2) and not(entrou_condicao_3):
+            raise ValueError('Gramática não é SLR(1)')
 
     for c in C:
         if c[1] in nao_terminais:
