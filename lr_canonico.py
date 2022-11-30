@@ -159,14 +159,14 @@ def construir_tabela_slr(glc):
     follow_posts = glc.follow_posts
 
     for n, i in enumerate(I):
-        entrou_condicao_1 = False
-        entrou_condicao_2 = False
-        entrou_condicao_3 = False
-
         for producao in i.fechamento:
             anterior = None
             head = list(producao.keys())[0]
             body = list(producao.values())[0]
+
+            entrou_condicao_1 = False
+            entrou_condicao_2 = False
+            entrou_condicao_3 = False
 
             for m, caractere in enumerate(body):
                 #primeira regra ACTION
@@ -195,11 +195,11 @@ def construir_tabela_slr(glc):
                         #terceira regra ACTION
                         ACTION[n]['$'] = 'accept'
                         entrou_condicao_3 = True
+
+                if (entrou_condicao_1 and entrou_condicao_2) or (entrou_condicao_1 and entrou_condicao_3) or (entrou_condicao_2 and entrou_condicao_3):
+                    raise ValueError('Gramática não é SLR(1)')
                 
                 anterior = caractere
-            
-        if not(entrou_condicao_1) and not(entrou_condicao_2) and not(entrou_condicao_3):
-            raise ValueError('Gramática não é SLR(1)')
 
     for c in C:
         if c[1] in nao_terminais:
