@@ -2,20 +2,14 @@ from enum import auto
 import math
 from automato_finito import AutomatoFinito
 
-def determinizar(nome,n_estados,estado_inicial, alfabeto, tabela_de_transicao, estados_finais):
+def determinizar(nome,n_estados,estado_inicial, alfabeto, tabela_de_transicao, estados_finais, lable_estados_finais):
     #print(n_estados)
     #print(estado_inicial)
     #print(alfabeto)
     #print(tabela_de_transicao)
     #print(estados_finais)
 
-    #MUDAR  ~~~~~~~~~~~~~
-    cont = 0
-    for i in estados_finais:
-        estados_finais[cont] = i-1
-        cont+=1
-    #FIM MUDAR ~~~~~
-    #print(estados_finais)
+    
 
     fecho = gerar_fecho(n_estados,estado_inicial, alfabeto, tabela_de_transicao, estados_finais)
     #print(fecho)
@@ -65,19 +59,21 @@ def determinizar(nome,n_estados,estado_inicial, alfabeto, tabela_de_transicao, e
     #print(dict_transicoes)
 
     novos_finais = []
-
+    novo_lable_estados_finais = dict()
     for i in range(len(lista_traducao)):
         for j in lista_traducao[i]:
             if j in estados_finais:
                 novos_finais.append(i)
+                if i not in list(novo_lable_estados_finais.keys()):
+                    novo_lable_estados_finais[i] = lable_estados_finais[j][:]
+                else:
+                    novo_lable_estados_finais[i] = novo_lable_estados_finais[i] + lable_estados_finais[j]
                 break
 
-    #print(novos_finais)
 
 
 
-
-    return escrever_afd(nome, len(lista_traducao), 0, novos_finais, alfabeto, dict_transicoes)
+    return [escrever_afd(nome, len(lista_traducao), 0, novos_finais, alfabeto, dict_transicoes), novo_lable_estados_finais]
 
 
 

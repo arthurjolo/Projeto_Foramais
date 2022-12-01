@@ -10,6 +10,7 @@ class AutomatoFinito:
         self.tabela_transicoes = [] #=  tabela_transicoes #[][]
         self.alfabeto =[]# alfabeto #[]
         self.nome = ""
+        self.lable_estados_finais = dict()
         self.ler_arquivo(arquivo)
 
     def get_n_estados(self):
@@ -55,7 +56,7 @@ class AutomatoFinito:
             #leitura dos estados finais
             linha1 = file.readline().split(',')
             for f in linha1:
-                self.estados_finais.append(int(f))
+                self.estados_finais.append(int(f[0]))
             
             #leitura do alfabeto
             linha1 = file.readline().split(',')
@@ -73,7 +74,6 @@ class AutomatoFinito:
                 if not linha:
                     break
                 linha = linha.split(',')
-                print(linha)
                 self.tabela_transicoes[int(linha[0])][self.alfabeto.index(linha[1])] = int(linha[2])
 
 
@@ -111,4 +111,6 @@ class AutomatoFinito:
             resposta.erro = "estado inválido"
      
         return resposta
+
+AutomatoFinito("regex_afd_saida/afd_letter.txt")
 

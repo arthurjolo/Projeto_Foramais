@@ -37,21 +37,25 @@ class Gerador_AnalizadoLexico:
             if(len(af_gerada) > 0):
                 for i in range(1, len(af_gerada)):
                     af_nova = uniao(af, af_gerada[i])
-                    af = af_nova
-            af_nova = AutomatoFinito(af_nova)
+                    af = af_nova[0]
+            lables = af_nova[1]
+            af_nova = AutomatoFinito(af_nova[0])
             self.automatos.append(af_nova)
             if not(self.analizador_autal):
                 self.analizador_autal = af_nova
                 self.analizador_autal.set_nome("analizador_lexico")
+                self.analizador_autal.lable_estados_finais = lables
             else:
                 analizador_novo = uniao(self.analizador_autal, af_nova) #precisa determinizar, quando o edu fizer o dele
-                self.analizador_autal = AutomatoFinito(analizador_novo)
+                self.analizador_autal = AutomatoFinito(analizador_novo[0])
+                self.analizador_autal.lable_estados_finais = analizador_novo[1]
                 self.analizador_autal.set_nome("analizador_lexico")
             continuar = input("deseja inserir outra ER? ('S' 'N')")
             if continuar.upper() == 'N':
                 break
     
     def analise_lexica(self):
+        print(self.analizador_autal.lable_estados_finais)
         lexemas = "lexemas"
         codigo_fonte = input("insira o nome do arquivo contendo o código fonte")
         codigo_fonte = "./entrada_codigo/ex1.txt"

@@ -10,11 +10,10 @@ def uniao(automato1_txt, automato2_txt):
     alfabeto = []
     tabela_de_transicao = []
     estados_finais = []
+    lable_estados_finais = dict()
 
     automato1 = AutomatoFinito(automato1_txt)
-    print(automato2_txt)
     automato2 = AutomatoFinito(automato2_txt)
-
     #construindo os estados do novo automato
     n_estados = automato1.get_n_estados() + automato2.get_n_estados() + 1
     #contruindo o alfabeto do novo automato
@@ -28,11 +27,26 @@ def uniao(automato1_txt, automato2_txt):
             alfabeto.append(l)
         
     #contruindo estados finais do novo automato
-    for f in automato1.get_estados_finais():
-        estados_finais.append(f+1)
+    if list(automato1.lable_estados_finais.keys()) == []:
+        for f in automato1.get_estados_finais():
+            estados_finais.append(f+1)
+            lable_estados_finais[f+1] = [automato1.nome]
+    else:
+        for f in automato1.get_estados_finais():
+            estados_finais.append(f+1)
+            lable_estados_finais[f+1] = automato1.lable_estados_finais[f][:]
     
-    for f in automato2.get_estados_finais():
-        estados_finais.append(f + automato1.get_n_estados() + 1)
+    if list(automato2.lable_estados_finais.keys()) == []:
+        for f in automato2.get_estados_finais():
+            estados_finais.append(f+ automato1.get_n_estados() +1)
+            lable_estados_finais[f + automato1.get_n_estados() +1] = [automato2.nome]
+    else:
+        for f in automato2.get_estados_finais():
+            estados_finais.append(f+ automato1.get_n_estados() +1)
+            lable_estados_finais[f + automato1.get_n_estados() +1] = automato2.lable_estados_finais[f][:]
+
+    #for f in automato2.get_estados_finais():
+    #    estados_finais.append(f + automato1.get_n_estados() + 1)
 
     #inicializando a tabela de transições do novo automato,
     #inicialmento todas as trasições são considerdos mortas(= infinito)
@@ -64,7 +78,7 @@ def uniao(automato1_txt, automato2_txt):
                 tabela_de_transicao[i][j] =math.inf
     
     escrever_afd("uniao_"+automato1.nome+"_"+automato2.nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_de_transicao)
-    return determinizar("uniao_"+automato1.nome+"_"+automato2.nome, n_estados ,estado_inicial, alfabeto, tabela_de_transicao, estados_finais)
+    return determinizar("uniao_"+automato1.nome+"_"+automato2.nome, n_estados ,estado_inicial, alfabeto, tabela_de_transicao, estados_finais, lable_estados_finais)
 
 def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
     nome_arquivo = f"./uniao_afd/afd_"+ nome +".txt"
@@ -97,4 +111,4 @@ def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabe
 
 
 
-#uniao("./regex_afd_saida/afd_er1.txt", "./regex_afd_saida/afd_er2.txt")
+uniao("./regex_afd_saida/afd_er1.txt", "./regex_afd_saida/afd_id.txt")
