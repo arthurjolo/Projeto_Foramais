@@ -44,15 +44,15 @@ def ler_arquivo(nome_arquivo):
     except:
         raise ValueError('Não há arquivo com esse nome!')
 
-def analisador_sintatico(nome_arquivo):
+def analisador_sintatico(nome_arquivo, entrada_lexica):
     retorno = ler_arquivo(nome_arquivo)
     try:
         glc = criar_glc(retorno[0],retorno[1])
-        lr_canonico(glc)
+        resultado = lr_canonico(glc, entrada_lexica)
+        print(resultado)
     except ValueError as e:
         print(e)
 
 
 if __name__ == "__main__":
-   analisador_sintatico("./glc_entrada/valida/lc/glc1.txt")
-    
+   analisador_sintatico("./glc_entrada/valida/lc/glc1.txt", '')

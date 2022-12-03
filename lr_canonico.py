@@ -205,10 +205,56 @@ def construir_tabela_slr(glc):
         if c[1] in nao_terminais:
             GOTO[c[0].indice][c[1]] = f'{c[2].indice}'
 
-    return ACTION, GOTO
+    return (ACTION, GOTO), enumerated_first_i
 
-def lr_canonico(glc):   
-    #tabela_slr = (ACTION, GOTO)                   
-    tabela_slr = construir_tabela_slr(glc)
-    print('aqui')
+
+
+def lr_canonico(glc, entrada_lexica):                   
+    tabela_slr, gramatica_estendida = construir_tabela_slr(glc)
+
+    #tabela = tupla(acao,desvio)
+    # acao = [{'(':'desvio','i': desvio}]
+    # desvio [{'E': 'desvio'}]
+
+    #entrada_lexica
+    # [{tipo: "entrada"}, {"tipo" : "entrada"}, {"tipo": "$"}]
+
+    pilha = [0]
+    simbolo = ""
+    entrada = []
+
+    for dic in entrada_lexica:
+        entrada.append(dic["tipo"])
+
+    while len(entrada) != 0 :
+        acao = tabela_slr[0][pilha[len(pilha -1)]][entrada[0]]
+
+        if acao[0] == 's':
+            idx_s = int(acao[1:])
+            simbolo = simbolo + (entrada.pop(0))
+            pilha.append(idx_s)
+
+        elif acao[0] == 'r':
+            idx_r = int(acao[1:])
+            dict_gram = gramatica_estendida[idx_r]
+
+            cabeca_prod = list(dict_gram.keys())[0]
+            corpo_prod = dict_gram[cabeca_prod]
+            corpo_prod_teste = corpo_prod
+
+            for i in range(len(corpo_prod)):
+                if simbolo[-1] != corpo_prod_teste[-1]:
+                    return "rejeita"
+                
+                corpo_prod_teste = corpo_prod_teste[:-1]
+                simbolo = simbolo[:-1]
+                pilha.pop()
+
+            simbolo = simbolo + cabeca_prod
+            pilha.append(int(tabela_slr[1][pilha[len(pilha-1)]][cabeca_prod]))
+
+        elif acao == 'acc':
+            print("aceita")
+            return "aceita"
     
+    return "rejeita"
