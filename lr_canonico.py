@@ -225,9 +225,9 @@ def lr_canonico(glc, entrada_lexica):
 
     for dic in entrada_lexica:
         entrada.append(dic["tipo"])
-
+    print(entrada)
     while len(entrada) != 0 :
-        acao = tabela_slr[0][pilha[len(pilha -1)]][entrada[0]]
+        acao = tabela_slr[0][pilha[(len(pilha)-1)]][entrada[0]]
 
         if acao[0] == 's':
             idx_s = int(acao[1:])

@@ -79,11 +79,14 @@ class Gerador_AnalizadoLexico:
                 return resposta_analise_lexica.erro
             
 
-        print(resposta_analise_lexica.lista_tokens)
-        return resposta_analise_lexica.lista_tokens
+        with open(f'./lista_tokens/{self.analizador_autal.nome}.txt', 'w') as f:
+            for token in resposta_analise_lexica.lista_tokens:
+                f.write(f"{token}\n")
+        
+        print("Análise léxica concluída com sucesso")
         
     def buscar_token(self, resposta_analise_lexica):
-        
+   
         estado = self.analizador_autal.estado_inicial
         ultimo_estado_de_aceitacao = self.analizador_autal.n_estados
 
@@ -110,12 +113,13 @@ class Gerador_AnalizadoLexico:
             resposta_analise_lexica.erro = resultado.erro
 
         elif not resultado.is_palavra_aceita and ultimo_lexema_aceito > 0:
-            tipo_token = ultimo_estado_de_aceitacao  
-            resposta_analise_lexica.lista_tokens.append(f"<{ultimo_estado_de_aceitacao},{resposta_analise_lexica.lexema_restante[:ultimo_lexema_aceito+1]}>")
+            tipo_token = self.analizador_autal.lable_estados_finais[ultimo_estado_de_aceitacao][0]
+            resposta_analise_lexica.lista_tokens.append(f"<{tipo_token},{resposta_analise_lexica.lexema_restante[:ultimo_lexema_aceito]}>")
             resposta_analise_lexica.lexema_restante = resposta_analise_lexica.lexema_restante[ultimo_lexema_aceito+1:]
 
         elif resultado.is_palavra_aceita:
-            resposta_analise_lexica.lista_tokens.append(f"<{resultado.estado_final},{resposta_analise_lexica.lexema_restante}>")
+            tipo_token  = self.analizador_autal.lable_estados_finais[resultado.estado_final][0]
+            resposta_analise_lexica.lista_tokens.append(f"<{tipo_token},{resposta_analise_lexica.lexema_restante}>")
 
         else:
             espaco = resposta_analise_lexica.lexema_restante.find(' ')
