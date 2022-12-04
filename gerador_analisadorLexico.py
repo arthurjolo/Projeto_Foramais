@@ -27,38 +27,29 @@ class Gerador_AnalizadoLexico:
                 self.analise_lexica()
             
     def add_er(self):
-        arquivo_er = input("insira o nome do arquivo contendo a ER")
-        arquivo_er = "./regex_entrada/regex1.txt"
+        #arquivo_er = "./regex_entrada/regex1.txt"
         while True:
+            arquivo_er = input("insira o nome do arquivo contendo a ER")
             self.expressoes_regulares.append(arquivo_er)
             af_gerada = regex_para_afd(arquivo_er)
             print(af_gerada)
-            af = af_gerada[0]
-            if(len(af_gerada) > 0):
-                for i in range(1, len(af_gerada)):
-                    af_nova = uniao(af, af_gerada[i])
-                    af = af_nova[0]
-            lables = af_nova[1]
-            af_nova = AutomatoFinito(af_nova[0])
-            self.automatos.append(af_nova)
-            if not(self.analizador_autal):
-                self.analizador_autal = af_nova
-                self.analizador_autal.set_nome("analizador_lexico")
-                self.analizador_autal.lable_estados_finais = lables
-            else:
-                analizador_novo = uniao(self.analizador_autal, af_nova) #precisa determinizar, quando o edu fizer o dele
-                self.analizador_autal = AutomatoFinito(analizador_novo[0])
-                self.analizador_autal.lable_estados_finais = analizador_novo[1]
-                self.analizador_autal.set_nome("analizador_lexico")
+            self.automatos += af_gerada
             continuar = input("deseja inserir outra ER? ('S' 'N')")
             if continuar.upper() == 'N':
+                af = AutomatoFinito(self.automatos[0])
+                for i in range(1, len(self.automatos)):
+                    af_nova = uniao(af, AutomatoFinito(self.automatos[i]))
+                    af = AutomatoFinito(af_nova[0])
+                    af.lable_estados_finais = af_nova[1]
+                self.analizador_autal = af
+                print("leble analisador: ", self.analizador_autal.lable_estados_finais)
                 break
     
     def analise_lexica(self):
         print(self.analizador_autal.lable_estados_finais)
         lexemas = "lexemas"
         codigo_fonte = input("insira o nome do arquivo contendo o código fonte")
-        codigo_fonte = "./entrada_codigo/ex1.txt"
+        #codigo_fonte = "./entrada_codigo/ex1.txt"
         
         with open(codigo_fonte) as f:
             lexemas = f.read()

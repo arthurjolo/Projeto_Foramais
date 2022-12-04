@@ -4,7 +4,7 @@ from automato_finito import AutomatoFinito
 
 from determinizar import determinizar 
 
-def uniao(automato1_txt, automato2_txt):
+def uniao(automato1, automato2):
     estado_inicial = 0
     estados = [0]
     alfabeto = []
@@ -12,8 +12,8 @@ def uniao(automato1_txt, automato2_txt):
     estados_finais = []
     lable_estados_finais = dict()
 
-    automato1 = AutomatoFinito(automato1_txt)
-    automato2 = AutomatoFinito(automato2_txt)
+    #automato1 = AutomatoFinito(automato1_txt)
+    #automato2 = AutomatoFinito(automato2_txt)
     #construindo os estados do novo automato
     n_estados = automato1.get_n_estados() + automato2.get_n_estados() + 1
     #contruindo o alfabeto do novo automato
@@ -39,11 +39,11 @@ def uniao(automato1_txt, automato2_txt):
     if list(automato2.lable_estados_finais.keys()) == []:
         for f in automato2.get_estados_finais():
             estados_finais.append(f+ automato1.get_n_estados() +1)
-            lable_estados_finais[f + automato1.get_n_estados() +1] = [automato2.nome]
+            lable_estados_finais[f+ automato1.get_n_estados() +1] = [automato2.nome]
     else:
         for f in automato2.get_estados_finais():
             estados_finais.append(f+ automato1.get_n_estados() +1)
-            lable_estados_finais[f + automato1.get_n_estados() +1] = automato2.lable_estados_finais[f][:]
+            lable_estados_finais[f+ automato1.get_n_estados() +1] = automato2.lable_estados_finais[f][:]
 
     #for f in automato2.get_estados_finais():
     #    estados_finais.append(f + automato1.get_n_estados() + 1)
@@ -107,8 +107,3 @@ def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabe
     arquivo.writelines(linhas)
     arquivo.close()
     return nome_arquivo
-
-
-
-
-uniao("./regex_afd_saida/afd_er1.txt", "./regex_afd_saida/afd_id.txt")

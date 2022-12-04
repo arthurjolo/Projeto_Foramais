@@ -54,9 +54,9 @@ class AutomatoFinito:
             self.estado_inicial = int(linha1)
             
             #leitura dos estados finais
-            linha1 = file.readline().split(',')
+            linha1 = file.readline().rstrip('\n').split(',')
             for f in linha1:
-                self.estados_finais.append(int(f[0]))
+                self.estados_finais.append(int(f))
             
             #leitura do alfabeto
             linha1 = file.readline().split(',')
