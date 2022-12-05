@@ -47,7 +47,11 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
     while states != []:
         S = states.pop()
         transicoes = []
+
         for a in entradas:
+            transicoes.append(None)
+
+        for j, a in enumerate(entradas):
             U = []
             for p in S:
                 if folhas[p-1].valor == a:
@@ -65,7 +69,7 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
          
             for i in range(len(Dstates)):
                 if U == Dstates[i]:
-                    transicoes.append(i) 
+                    transicoes[j] = i 
                     break
         Dtran.append(transicoes)
 
@@ -474,10 +478,11 @@ def escrever_resultados(dict_adf):
         tabela_de_transicoes = automato.tabela_transicoes
         for i in range(len(tabela_de_transicoes)):
             for j in range(len(tabela_de_transicoes[i])):
-                estado_origem = str(i)
-                simbolo = alfabeto[j]
-                estado_destino = str(tabela_de_transicoes[i][j])
-                linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
+                if tabela_de_transicoes[i][j] != None:
+                    estado_origem = str(i)
+                    simbolo = alfabeto[j]
+                    estado_destino = str(tabela_de_transicoes[i][j])
+                    linhas.append('\n'+','.join([estado_origem,simbolo,estado_destino]))
 
         arquivo.writelines(linhas)
         arquivo.close()
@@ -492,5 +497,5 @@ def regex_para_afd(nome_do_arquivo):
     return escrever_resultados(dict_afd)
 
 if __name__ == "__main__":
-    print(regex_para_afd("./regex_entrada/regex1.txt"))
+    print(regex_para_afd("./regex_entrada/regex5.txt"))
     
