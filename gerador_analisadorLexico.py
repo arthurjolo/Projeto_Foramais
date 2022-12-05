@@ -36,12 +36,11 @@ class Gerador_AnalizadoLexico:
             self.automatos += af_gerada
             continuar = input("deseja inserir outra ER? ('S' 'N')")
             if continuar.upper() == 'N':
-                af = AutomatoFinito(self.automatos[0])
-                for i in range(1, len(self.automatos)):
-                    af_nova = uniao(af, AutomatoFinito(self.automatos[i]))
-                    af = AutomatoFinito(af_nova[0])
-                    af.lable_estados_finais = af_nova[1]
-                self.analizador_autal = af
+                for i in range(0, len(self.automatos)):
+                    self.automatos[i] = AutomatoFinito(self.automatos[i])
+                af = uniao(self.automatos)
+                self.analizador_autal = AutomatoFinito(af[0])
+                self.analizador_autal.lable_estados_finais = af[1]
                 print("leble analisador: ", self.analizador_autal.lable_estados_finais)
                 break
     
@@ -111,7 +110,7 @@ class Gerador_AnalizadoLexico:
         elif resultado.is_palavra_aceita:
             tipo_token  = self.analizador_autal.lable_estados_finais[resultado.estado_final][0]
             resposta_analise_lexica.lista_tokens.append(f"<{tipo_token},{resposta_analise_lexica.lexema_restante}>")
-
+            resposta_analise_lexica.lexema_restante = resposta_analise_lexica.lexema_restante[ultimo_lexema_aceito+1:]
         else:
             espaco = resposta_analise_lexica.lexema_restante.find(' ')
             quebra = resposta_analise_lexica.lexema_restante.find('\n')
@@ -120,7 +119,7 @@ class Gerador_AnalizadoLexico:
             else:
                 corte = min(espaco, quebra)
             resposta_analise_lexica.lexema_restante = resposta_analise_lexica.lexema_restante[corte::]
-        
+            resposta_analise_lexica.erro = "Token inválido"
         return resposta_analise_lexica
 
 

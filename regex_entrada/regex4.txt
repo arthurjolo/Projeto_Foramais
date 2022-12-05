@@ -1,0 +1,4 @@
+varName: id_([a-z]|[0-9])*
+attr: =
+strValue: "([a-zA-Z])*"
+intValue: [0-9]*

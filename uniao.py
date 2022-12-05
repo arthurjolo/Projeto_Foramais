@@ -69,11 +69,11 @@ def uniao(automatos):
     for i in range(len(automatos)):
         tabela_de_transicao[0][0] += [ajuste]
         ajuste += automatos[i].get_n_estados()
-    print(tabela_de_transicao)
+   
     automato_n = 0
     automato = automatos[0]
     ajuste = 1
-    print(estados_finais)
+   
     for i in range(1, n_estados):
         if (i < ajuste + automato.get_n_estados()):
             automato = automatos[automato_n]
