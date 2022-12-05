@@ -233,7 +233,7 @@ def lr_canonico(glc, entrada_lexica):
     for elem in entrada_full:
         for i in elem:
             entrada.append(i)
-
+    entrada.append('$')
     print(entrada)
 
 

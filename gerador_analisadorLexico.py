@@ -68,8 +68,19 @@ class Gerador_AnalizadoLexico:
                 print(resposta_analise_lexica.erro)
                 return resposta_analise_lexica.erro
             
+        nome_codigo = ""
+        comeco_nome = 0
+        fim_nome = 0
+        for i in range(len(codigo_fonte)):
+            if codigo_fonte[i] == '/':
+                comeco_nome = i+1
+            if codigo_fonte[i] == '.':
+                fim_nome = i
+        if comeco_nome and fim_nome:
+            nome_codigo = codigo_fonte[comeco_nome:fim_nome]
+        print(nome_codigo)
 
-        with open(f'./lista_tokens/{self.analizador_autal.nome}.txt', 'w') as f:
+        with open(f'./lista_tokens/tolken_{nome_codigo}.txt', 'w') as f:
             for token in resposta_analise_lexica.lista_tokens:
                 f.write(f"{token}\n")
         
