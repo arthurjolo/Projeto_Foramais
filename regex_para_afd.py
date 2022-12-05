@@ -54,9 +54,10 @@ def definir_afd(arvore, follow_pos, entradas, folhas):
                     U = U + follow_pos[p-1]
             U = remove_repetidos(U)
 
-            if U not in Dstates:
-                Dstates.append(U)
-                states.append(U)
+            if U != []:
+                if U not in Dstates:
+                    Dstates.append(U)
+                    states.append(U)
 
             if len(folhas) in U:
                 if len(Dstates)-1 not in final_states:
@@ -314,12 +315,14 @@ def criar_arvore(expressao, todos):
                             elif primeiro in numeros:
                                 lista_possiveis = retornar_todos_entre(numeros, primeiro, ultimo)
                             possiveis += colocar_operacao_entre_elementos(lista_possiveis, '|')
+                            possiveis.append('|')
                             primeiro = None
                             ultimo = None
                         else:
                             ultimo = simbolo[i]
                     else:
-                        primeiro = simbolo[i] 
+                        primeiro = simbolo[i]
+                possiveis.pop()
                 valor_direita =  criar_arvore(possiveis, todos)                  
             else:
                 for i in range(tamanho):
