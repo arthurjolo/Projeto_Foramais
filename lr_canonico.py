@@ -135,6 +135,15 @@ def gerar_gramatica_estendida(glc):
 
 def construir_tabela_slr(glc):
     gramatica_estendida = gerar_gramatica_estendida(glc)
+    enumerated_first_i = []
+    for producoes in gramatica_estendida.items():
+        head = producoes[0]
+        body = producoes[1]
+        for producao in body:
+            dic = {}
+            dic[head] = tira_caractere(producao, '#')
+            enumerated_first_i.append(dic)
+
     terminais = glc.terminais
     nao_terminais = glc.nao_terminais
     simbolos = nao_terminais + terminais
@@ -145,15 +154,6 @@ def construir_tabela_slr(glc):
     for i in range(len(I)):
         ACTION.append({})
         GOTO.append({})
-
-    first_i = C[0][2]
-    enumerated_first_i = []
-    for producoes in first_i.fechamento:
-        head = list(producoes.keys())[0]
-        body = list(producoes.values())[0]
-        dic = {}
-        dic[head] = tira_caractere(body, '#')
-        enumerated_first_i.append(dic)
 
     glc.calcular_follow_pos()
     follow_posts = glc.follow_posts
@@ -180,7 +180,7 @@ def construir_tabela_slr(glc):
                                     entrou_condicao_1 = True
                 elif caractere == '#' and m == len(body)-1:
                     #segunda regra ACTION
-                    if head != list(first_i.item[0].keys())[0]:
+                    if head != list(enumerated_first_i[0].keys())[0]:
                         follow_pos = follow_posts[head]
                         producao_comparativa = copy(producao)
                         for indice, valor in producao_comparativa.items():
