@@ -54,9 +54,9 @@ class AutomatoFinito:
             self.estado_inicial = int(linha1)
             
             #leitura dos estados finais
-            linha1 = file.readline().split(',')
+            linha1 = file.readline().rstrip('\n').split(',')
             for f in linha1:
-                self.estados_finais.append(int(f[0]))
+                self.estados_finais.append(int(f))
             
             #leitura do alfabeto
             linha1 = file.readline().split(',')
@@ -92,11 +92,8 @@ class AutomatoFinito:
                 if letra_atual not in self.alfabeto:
                     resposta.erro = "nao esta no alfabeto"
                 else:
-                    try:
-                        proximos_estados = [self.tabela_transicoes[estado_atual][self.alfabeto.index(letra_atual)]]
-                    except Exception as e:
-                        proximos_estados = None
-
+                    
+                    proximos_estados = [self.tabela_transicoes[estado_atual][self.alfabeto.index(letra_atual)]]
                     proximos_estados_processar = []
                 
                     if (proximos_estados == None):
@@ -112,5 +109,4 @@ class AutomatoFinito:
      
         return resposta
 
-AutomatoFinito("regex_afd_saida/afd_letter.txt")
 

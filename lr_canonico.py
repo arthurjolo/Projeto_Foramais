@@ -218,17 +218,30 @@ def lr_canonico(glc, entrada_lexica):
 
     #entrada_lexica
     # [{tipo: "entrada"}, {"tipo" : "entrada"}, {"tipo": "$"}]
-
+    #entrada_lexica = [{"tipo": "i"},{"tipo": "d"},{"tipo": "*"},{"tipo": "i"},{"tipo": "d"},{"tipo": "+"},{"tipo": "i"},{"tipo": "d"},{"tipo": "$"}]
     pilha = [0]
     simbolo = ""
+    entrada_full = []
     entrada = []
 
+    print(tabela_slr)
+    print(gramatica_estendida)
     for dic in entrada_lexica:
-        entrada.append(dic["tipo"])
-    print(entrada)
-    while len(entrada) != 0 :
-        acao = tabela_slr[0][pilha[(len(pilha)-1)]][entrada[0]]
+        entrada_full.append(dic["tipo"])
+    print(entrada_full)
 
+    for elem in entrada_full:
+        for i in elem:
+            entrada.append(i)
+
+    print(entrada)
+
+
+    while len(entrada) != 0 :
+        try:
+            acao = tabela_slr[0][pilha[(len(pilha)-1)]][entrada[0]]
+        except:
+           return "rejeita"
         if acao[0] == 's':
             idx_s = int(acao[1:])
             simbolo = simbolo + (entrada.pop(0))
@@ -251,10 +264,12 @@ def lr_canonico(glc, entrada_lexica):
                 pilha.pop()
 
             simbolo = simbolo + cabeca_prod
-            pilha.append(int(tabela_slr[1][pilha[len(pilha-1)]][cabeca_prod]))
+            try:
+                pilha.append(int(tabela_slr[1][pilha[len(pilha)-1]][cabeca_prod]))
+            except:
+                return "rejeita"
 
-        elif acao == 'acc':
-            print("aceita")
+        elif acao == 'accept':
             return "aceita"
     
     return "rejeita"

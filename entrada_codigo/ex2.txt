@@ -1,0 +1,2 @@
+id_var = "dccd"
+id_var1 = 1001

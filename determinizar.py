@@ -63,12 +63,12 @@ def determinizar(nome,n_estados,estado_inicial, alfabeto, tabela_de_transicao, e
     for i in range(len(lista_traducao)):
         for j in lista_traducao[i]:
             if j in estados_finais:
-                novos_finais.append(i)
+                if i not in novos_finais:
+                    novos_finais.append(i)
                 if i not in list(novo_lable_estados_finais.keys()):
                     novo_lable_estados_finais[i] = lable_estados_finais[j][:]
                 else:
                     novo_lable_estados_finais[i] = novo_lable_estados_finais[i] + lable_estados_finais[j]
-                break
 
 
 
