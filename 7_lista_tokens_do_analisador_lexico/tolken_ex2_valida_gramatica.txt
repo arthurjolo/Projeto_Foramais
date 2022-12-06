@@ -1,0 +1,6 @@
+<varname,id_var>
+<attr,=>
+<strvalue,"dccd">
+<varname,id_var1>
+<attr,=>
+<intvalue,1001>

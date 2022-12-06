@@ -1,0 +1,5 @@
+<id,aaa>
+<and,^>
+<id,uuu>
+<or,v>
+<id,kkk>

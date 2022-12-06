@@ -96,7 +96,7 @@ def uniao(automatos):
     return determinizar("uniao_", n_estados ,estado_inicial, alfabeto, tabela_de_transicao, estados_finais, lable_estados_finais)
 
 def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
-    nome_arquivo = f"./uniao_afd/afd_"+ nome +".txt"
+    nome_arquivo = f"./3_uniao_afd/afd_"+ nome +".txt"
     arquivo = open(nome_arquivo, "w")
     linhas = [nome]
 

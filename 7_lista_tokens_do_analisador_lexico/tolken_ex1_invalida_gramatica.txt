@@ -1,0 +1,6 @@
+<id,abc>
+<and,^>
+<id,ecd>
+<or,v>
+<id,edd>
+<or,v>

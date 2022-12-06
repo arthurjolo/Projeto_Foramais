@@ -119,7 +119,7 @@ def gerar_fecho(n_estados,estado_inicial, alfabeto, tabela_de_transicao, estados
 
 
 def escrever_afd(nome, n_estados, estado_inicial, estados_finais, alfabeto, tabela_transicoes):
-    nome_arquivo = f"./determinizar_afd/afd_"+ nome +"_determinizada.txt"
+    nome_arquivo = f"./4_determinizar_afd/afd_"+ nome +"_determinizada.txt"
     arquivo = open(nome_arquivo, "w")
     linhas = [nome]
 

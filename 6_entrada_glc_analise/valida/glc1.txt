@@ -1,0 +1,3 @@
+E -> EorT | T
+T -> TandF | F
+F -> (E) | id

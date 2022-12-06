@@ -458,7 +458,7 @@ def ler_arquivo(nome_arquivo):
 def escrever_resultados(dict_adf):
     arquivos_saida = []
     for chave in dict_adf.keys():
-        nome_arquivo = f"./regex_afd_saida/afd_{chave}.txt"
+        nome_arquivo = f"./2_regex_to_afd/afd_{chave}.txt"
         arquivo = open(nome_arquivo, "w")
         automato = dict_adf[chave]
         linhas = [chave]

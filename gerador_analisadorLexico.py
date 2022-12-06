@@ -52,9 +52,12 @@ class Gerador_AnalizadoLexico:
         
         with open(codigo_fonte) as f:
             lexemas = f.read()
+        print(lexemas)
 
         resposta_analise_lexica = RespostaAnalisadorLexico()
         resposta_analise_lexica.lexema_restante = lexemas
+        resposta_analise_lexica.lista_tokens = []
+        
 
         while True:
             if (len(resposta_analise_lexica.lexema_restante) == 0):
@@ -80,7 +83,7 @@ class Gerador_AnalizadoLexico:
             nome_codigo = codigo_fonte[comeco_nome:fim_nome]
         print(nome_codigo)
 
-        with open(f'./lista_tokens/tolken_{nome_codigo}.txt', 'w') as f:
+        with open(f'./7_lista_tokens_do_analisador_lexico/tolken_{nome_codigo}.txt', 'w') as f:
             for token in resposta_analise_lexica.lista_tokens:
                 f.write(f"{token}\n")
         
@@ -130,7 +133,8 @@ class Gerador_AnalizadoLexico:
             else:
                 corte = min(espaco, quebra)
             resposta_analise_lexica.lexema_restante = resposta_analise_lexica.lexema_restante[corte::]
-            resposta_analise_lexica.erro = "Token inválido"
+            if(resposta_analise_lexica.lexema_restante[:corte] != ' '):
+                resposta_analise_lexica.erro = "Token inválido"
         return resposta_analise_lexica
 
 

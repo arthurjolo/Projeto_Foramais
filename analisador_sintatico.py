@@ -54,5 +54,4 @@ def analisador_sintatico(nome_arquivo, entrada_lexica):
         print(e)
 
 
-if __name__ == "__main__":
-   analisador_sintatico("./glc_entrada/valida/lc/glc1.txt", '')
+

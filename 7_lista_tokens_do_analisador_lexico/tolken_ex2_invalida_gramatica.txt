@@ -1,0 +1,3 @@
+<varname,id_var>
+<attr,=>
+<varname,id_var1>
