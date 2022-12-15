@@ -209,7 +209,7 @@ def construir_tabela_slr(glc):
 
 
 
-def lr_canonico(glc, entrada_lexica):                   
+def slr(glc, entrada_lexica):                   
     tabela_slr, gramatica_estendida = construir_tabela_slr(glc)
 
     #tabela = tupla(acao,desvio)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from gramatica import Gramatica
-from lr_canonico import lr_canonico
+from slr import slr
 from utils import tira_caractere
 
 '''
@@ -48,7 +48,7 @@ def analisador_sintatico(nome_arquivo, entrada_lexica):
     retorno = ler_arquivo(nome_arquivo)
     try:
         glc = criar_glc(retorno[0],retorno[1])
-        resultado = lr_canonico(glc, entrada_lexica)
+        resultado = slr(glc, entrada_lexica)
         print(resultado)
     except ValueError as e:
         print(e)
